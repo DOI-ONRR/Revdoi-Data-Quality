@@ -1,18 +1,20 @@
-# author Matthew Kudija
-# https://matthewkudija.com/blog/2018/07/21/excel-diff/
+# Credit to Matthew Kudija for the Source Code
+# Link: https://matthewkudija.com/blog/2018/07/21/excel-diff/
+import os
 import pandas as pd
 from pathlib import Path
 
 
-def excel_diff(path_OLD, path_NEW, index_col):
+def excel_diff(path_OLD, path_NEW):
 
-    df_OLD = pd.read_excel(path_OLD, index_col=index_col).fillna(0)
-    df_NEW = pd.read_excel(path_NEW, index_col=index_col).fillna(0)
+    df_OLD = pd.read_excel("files/monthly_production_05-2019.xlsx").fillna(0)
+    df_NEW = pd.read_excel("files/mothpro2019.xlsx").fillna(0)
 
     # Perform Diff
     dfDiff = df_NEW.copy()
     droppedRows = []
     newRows = []
+    changedRows = []
 
     cols_OLD = df_OLD.columns
     cols_NEW = df_NEW.columns
@@ -27,6 +29,7 @@ def excel_diff(path_OLD, path_NEW, index_col):
                     dfDiff.loc[row,col] = df_NEW.loc[row,col]
                 else:
                     dfDiff.loc[row,col] = ('{}→{}').format(value_OLD,value_NEW)
+                    changedRows.append(row)
         else:
             newRows.append(row)
 
@@ -39,6 +42,7 @@ def excel_diff(path_OLD, path_NEW, index_col):
     print(dfDiff)
     print('\nNew Rows:     {}'.format(newRows))
     print('Dropped Rows: {}'.format(droppedRows))
+    print('Changed Rows: {}'.format(changedRows))
 
     # Save output and format
     fname = '{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
@@ -61,8 +65,8 @@ def excel_diff(path_OLD, path_NEW, index_col):
     cur_fmt = workbook.add_format({'align': 'center', 'num_format': '$#,##0.00'})
     perc_fmt = workbook.add_format({'align': 'center', 'num_format': '0%'})
     grey_fmt = workbook.add_format({'font_color': '#E0E0E0'})
-    highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
-    new_fmt = workbook.add_format({'font_color': '#32CD32','bold':True})
+    highlight_fmt = workbook.add_format({'font_color': '#4286F4', 'bg_color':'#EDEAEA'})
+    new_fmt = workbook.add_format({'font_color': '#529973','bold':True})
 
     # set format over range
     ## highlight changed cells
@@ -76,23 +80,21 @@ def excel_diff(path_OLD, path_NEW, index_col):
         if row+1 in newRows:
             worksheet.set_row(row+1, 15, new_fmt)
         if row+1 in droppedRows:
-            worksheet.set_row(row+1, 15, grey_fmt)
+            worksheet.set_row(row+1, 15, highlight_fmt)
 
     # save
     writer.save()
-    print('\nDone.\n')
+    print('\nDone. Exported DIFF to ' + os.getcwd() + '\\' + fname + '\n')
 
 
 def main():
-    path_OLD = Path('v1.xlsx')
-    path_NEW = Path('v2.xlsx')
+    path_OLD = Path('files/monthly_production_05-2019.xlsx')
+    path_NEW = Path('files/mothpro2019.xlsx')
 
     # get index col from data
     df = pd.read_excel(path_NEW)
-    index_col = df.columns[0]
-    print('\nIndex column: {}\n'.format(index_col))
 
-    excel_diff(path_OLD, path_NEW, index_col)
+    excel_diff(path_OLD, path_NEW)
 
 
 if __name__ == '__main__':
