@@ -17,9 +17,10 @@ I'll put notes here. Feel free to give feedback... or snacks
         * Green = New
         * Red with arrow = Changed
         * Grey = Dropped
+      * How to Run: **_python diff.py argv[1] argv[2]_**
       * Keyword arguments:
-        * argv[1] = Old File
-        * argv[2] = New File
+        * argv[1] = Old File path
+        * argv[2] = New File path
 * Will work on other scripts soon
     1. Formatting (Order, Units, etc.) [Main Priority]
     2. Historical Data (Standard Deviation) [Backlog]
