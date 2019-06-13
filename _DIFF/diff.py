@@ -44,14 +44,14 @@ def excel_diff(path_OLD, path_NEW):
     print('\nNew Rows:     {}'.format(newRows))
     print('Dropped Rows: {}'.format(droppedRows))
     if len(changedCells) > 20:
-        print("Too many changed cells to print")
-    else:
-        print('Changed Cells: {}'.format(changedCells))
+        answer = input("There are a lot of changed cells. Print anyway? [y/n]")
+        if (answer == 'y'):
+            print('Changed Cells: {}'.format(changedCells))
     print('\nNew Columns:',newCols)
     print('Dropped Columns:',droppedCols)
 
     # Save output and format
-    fname = '[DIFF]{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
+    fname = '{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
     writer = pd.ExcelWriter(fname, engine='xlsxwriter')
 
     dfDiff.to_excel(writer, sheet_name='DIFF', index=True)
@@ -93,15 +93,12 @@ def excel_diff(path_OLD, path_NEW):
     print('\nDone. Exported DIFF to ' + str(Path.cwd()) + '\n')
 
 
-def main():
-    path_OLD = Path(input("Old? "))
-    path_NEW = Path(input("New? "))
-
-    # get index col from data
-    df = pd.read_excel(path_NEW)
+def main(p1, p2):
+    path_OLD = Path(p1)
+    path_NEW = Path(p2)
 
     excel_diff(path_OLD, path_NEW)
 
 
 if __name__ == '__main__':
-    main()
+    main(argv[1], argv[2])
