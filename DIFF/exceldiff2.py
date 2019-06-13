@@ -51,7 +51,7 @@ def excel_diff(path_OLD, path_NEW):
     print('Dropped Columns:',droppedCols)
 
     # Save output and format
-    fname = '{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
+    fname = '[DIFF]{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
     writer = pd.ExcelWriter(fname, engine='xlsxwriter')
 
     dfDiff.to_excel(writer, sheet_name='DIFF', index=True)
@@ -93,9 +93,9 @@ def excel_diff(path_OLD, path_NEW):
     print('\nDone. Exported DIFF to ' + str(Path.cwd()) + '\n')
 
 
-def main(path_one, path_two):
-    path_OLD = Path(path_one)
-    path_NEW = Path(path_two)
+def main():
+    path_OLD = Path(input("Old? "))
+    path_NEW = Path(input("New? "))
 
     # get index col from data
     df = pd.read_excel(path_NEW)
@@ -104,4 +104,4 @@ def main(path_one, path_two):
 
 
 if __name__ == '__main__':
-    main("monthly_production_05-2019", "mothpro2019")
+    main()
