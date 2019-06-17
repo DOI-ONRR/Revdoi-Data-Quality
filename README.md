@@ -24,3 +24,9 @@ I'll put notes here. Feel free to give feedback... or snacks
 * Will work on other scripts soon
     1. Formatting (Order, Units, etc.) [Main Priority]
     2. Historical Data (Standard Deviation) [Backlog]
+
+[6/17]
+* Unit Dictionary: Mostly done
+* Column Check: Done
+* Other fields: wip
+* Will start working on aggregate data soon
