@@ -80,20 +80,20 @@ def write_header(header):
     config.close()
 
 
-def check_header(file):
+def check_header(file, default):
     columns = file.columns
     uncheckedCols = set(columns)
-    for i in range(len(header)):
+    for i in range(len(default)):
         # Checks if Field in file and in correct column
-        if columns.contains(header[i]):
-            if columns[i] == header[i]:
-                print(header[i] + ": True")
+        if columns.contains(default[i]):
+            if columns[i] == default[i]:
+                print(default[i] + ": True")
             else:
-                print(header[i] + ": Wrong order")
-            uncheckedCols.remove(header[i])
+                print(default[i] + ": Wrong order")
+            uncheckedCols.remove(default[i])
         else:
             # Field not present in the file
-            print(header[i] + ': N/A')
+            print(default[i] + ': N/A')
     # Prints all fields not in the format
     print('\nNew Cols:', uncheckedCols)
 
@@ -115,3 +115,17 @@ def check_unit_dict(file, default):
         index+=1
     if not bad:
         print('No Errors Found :)')
+
+
+def setup(pathname):
+    sample = pd.read_Excel(pathname)
+    write_header(set_header(sample))
+    write_units(make_unit_dict(sample))
+
+
+def main(pathname):
+    file = pd.read_Excel(pathname)
+    default_header = read_hconfig()
+    default_units = read_uconfig()
+    check_header(file, default_header)
+    check_unit_dict(file, default_units)
