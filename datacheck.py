@@ -50,8 +50,30 @@ def get_unit_dict(file):
     return units
 
 
+def get_land_classes(file):
+    classes = set()
+    for row in file['Land Class']:
+        classes.add(row)
+    return classes
+
+
+def get_land_categories(file):
+    categories = set()
+    for row in file['Land Categories']:
+        categories.add(row)
+    return categories
+
+
+def get_states(file):
+    states = set()
+    for row in file['State']:
+        categories.add(row)
+    return states
+
+
 # Returns Split String based on Commodity and Unit
 def split_unit(string):
+    string = str(string)
     # For general purpose commodities
     if "(" in string:
         split = string.rsplit(" (",1)
