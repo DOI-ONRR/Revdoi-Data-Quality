@@ -17,10 +17,7 @@ I'll put notes here. Feel free to give feedback... or snacks
         * Green = New
         * Red with arrow = Changed
         * Grey = Dropped
-      * How to Run: **_python diff.py argv[1] argv[2]_**
-      * Keyword arguments:
-        * argv[1] = Old File path
-        * argv[2] = New File path
+      * How to Run: **_python diff.py "oldFile" "newFile"_**
 * Will work on other scripts soon
     1. Formatting (Order, Units, etc.) [Main Priority]
     2. Historical Data (Standard Deviation) [Backlog]
@@ -30,3 +27,8 @@ I'll put notes here. Feel free to give feedback... or snacks
 * Column Check: Done
 * Other fields: wip
 * Will start working on aggregate data soon
+
+[6/18]
+* Quality check now usable in Terminal
+  * Setup: **_python datachecker.py setup "sampleFile"_**
+  * Check File: **_python datachecker.py "pathname"_**
