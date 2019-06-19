@@ -8,9 +8,9 @@ from sys import argv
 
 # Reads Unit Config File
 # Commodity and Unit seperated by an equals sign " = "
-def read_uconfig():
+def read_uconfig(type):
     units = {}
-    with open("config/unitdef.txt") as udef:
+    with open("config/" + type + "unitdef.cfg") as udef:
         for line in udef:
             split = line.split(" = ")
             add_item(split[0], split[1].strip(), units)
@@ -18,12 +18,18 @@ def read_uconfig():
 
 
 # Reads Header Config File
-def read_hconfig():
+def read_hconfig(type):
     columns = []
-    with open("config/headerdef.txt") as hdef:
+    with open("config/" + type + "headerdef.cfg") as hdef:
         columns = [line.strip() for line in hdef]
     return columns
 
+
+def get_data_type(name):
+    if "production" in name:
+        return "p"
+    elif "revenue" in name:
+        return "r"
 
 # Returns Header List based on Excel file
 def get_header(file):
@@ -89,8 +95,8 @@ def add_item(key, value, dictionary):
 
 # Wrties to config to speed up process later
 # TODO: Maybe have it write seperate files for each type?
-def write_units(units):
-    with open("config/unitdef.txt", "w") as config:
+def write_units(units, type):
+    with open("config/" + type + "unitdef.cfg", "w") as config:
         for k,v in units.items():
             for u in v:
                 line = k + " = " +  u.strip("'")  + '\n'
@@ -98,8 +104,8 @@ def write_units(units):
 
 
 # TODO: Same as above
-def write_header(header):
-    with open("config/headerdef.txt","w") as config:
+def write_header(header, type):
+    with open("config/" + type + "headerdef.cfg","w") as config:
         for field in header:
             config.write(field + '\n')
 
@@ -150,23 +156,25 @@ def check_nan(file, col):
             print("Row " + str(i) + ": Missing " + col)
 
 
-def setup(pathname):
+def setup(pathname, type):
     sample = pd.read_excel(pathname)
     if not os.path.exists('config'):
         print('No Config Folder found. Creating folder...')
         os.mkdir('config')
-    write_header(get_header(sample))
-    write_units(get_unit_dict(sample))
+    write_header(get_header(sample), type)
+    write_units(get_unit_dict(sample), type)
     print("Setup Complete")
 
 
 def main():
     if argv[1].lower() == 'setup':
-        setup(argv[2])
+        type = get_data_type(argv[2])
+        setup(argv[2], type)
     else:
+        type = get_data_type(argv[1])
         file = pd.read_excel(argv[1])
-        default_header = read_hconfig()
-        default_units = read_uconfig()
+        default_header = read_hconfig(type)
+        default_units = read_uconfig(type)
         print('\n')
         check_header(file, default_header)
         print('\n')

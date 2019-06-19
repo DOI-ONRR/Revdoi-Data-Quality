@@ -3,7 +3,7 @@ I'll put notes here. Feel free to give feedback... or snacks
 
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
-Data Check:
+Format Check:
 * Setup: **_python datachecker.py setup "sampleFile"_**
 * Check File: **_python datachecker.py "pathname"_**
 
@@ -35,9 +35,12 @@ Data Check:
 * Will start working on aggregate data soon
 
 [6/18]
-* Quality check now usable in Terminal
+* Format check now usable in Terminal
   * Setup: **_python datachecker.py setup "sampleFile"_**
   * Check File: **_python datachecker.py "pathname"_**
 * Unit Dictionary: Done
 * Other fields?: wip
 * Historical Data: wip
+
+[6/19]
+* Reorganization of files
