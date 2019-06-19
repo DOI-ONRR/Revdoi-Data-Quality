@@ -21,8 +21,7 @@ def read_uconfig():
 def read_hconfig():
     columns = []
     with open("config/headerdef.txt") as hdef:
-        for line in hdef:
-            columns.append(line.strip())
+        columns = [line.strip() for line in hdef]
     return columns
 
 
@@ -51,11 +50,17 @@ def get_unit_dict(file):
 
 
 # Returns a set based on Field given
-def get_column(file, name):
-    items = set()
-    for row in file[name]:
-        items.add(row)
-    return items
+def get_column(file, col):
+    return {row for row in file[col]}
+
+
+# Returns number of W's in column
+def get_w_count(file, col):
+    w_count = 0
+    for row in file[col]:
+        if row == 'W':
+            w_count += 1
+    return w_count
 
 
 # Returns Split String based on Commodity and Unit
@@ -140,7 +145,7 @@ def check_unit_dict(file, default):
 
 # Reports if a row is NaN for a certain column
 def check_nan(file, col):
-    for i in range(len(file))
+    for i in range(len(file)):
         if isnan(row):
             print("Row " + str(i) + ": Missing " + col)
 

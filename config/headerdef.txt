@@ -1,8 +1,10 @@
 Calendar Year
-Product
-State/Offshore Region
+Land Category
+Land Class
+State
+County
 FIPS Code
-CPS/Planning Area
-Production Volume
-Onshore/Offshore
-Category
+Offshore Region
+Offshore Planning Area
+Product
+Volume
