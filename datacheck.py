@@ -48,13 +48,6 @@ def get_unit_dict(file):
     return units
 
 
-# Reports if a row is NaN for a certain column
-def check_nan(file, col):
-    for i in range(len(file))
-        if isnan(row):
-            print("Row " + str(i) + ": Missing " + col)
-
-
 # Returns a set based on Field given
 def get_column(file, name):
     items = set()
@@ -141,6 +134,13 @@ def check_unit_dict(file, default):
         index+=1
     if not bad:
         print('No Errors Found :)')
+
+
+# Reports if a row is NaN for a certain column
+def check_nan(file, col):
+    for i in range(len(file))
+        if isnan(row):
+            print("Row " + str(i) + ": Missing " + col)
 
 
 def setup(pathname):
