@@ -1,5 +1,6 @@
 __author__ = "Edward Chang"
 
+from math import isnan
 import os
 import pandas as pd
 from sys import argv
@@ -12,7 +13,6 @@ def get_com_or_pro(col):
 
 # Reads Unit Config File
 # Commodity and Unit seperated by an equals sign " = "
-# Fast, Best for small number of Units / after initial read
 def read_uconfig():
     units = {}
     with open("config/unitdef.txt") as udef:
@@ -32,13 +32,11 @@ def read_hconfig():
 
 
 # Returns Header List based on Excel file
-# Use if large amount of Field Names
 def get_header(file):
     return list(file.columns)
 
 
 # Returns Unit Dictionary on Excel file
-# Very Slow, but better than manually setting large # of units
 def get_unit_dict(file):
     units = {}
     col = get_com_or_pro(file.columns)
@@ -50,25 +48,19 @@ def get_unit_dict(file):
     return units
 
 
-def get_land_classes(file):
-    classes = set()
-    for row in file['Land Class']:
-        classes.add(row)
-    return classes
+# Reports if a row is NaN for a certain column
+def check_nan(file, col):
+    for i in range(len(file))
+        if isnan(row):
+            print("Row " + str(i) + ": Missing " + col)
 
 
-def get_land_categories(file):
-    categories = set()
-    for row in file['Land Categories']:
-        categories.add(row)
-    return categories
-
-
-def get_states(file):
-    states = set()
-    for row in file['State']:
-        categories.add(row)
-    return states
+# Returns a set based on Field given
+def get_column(file, name):
+    items = set()
+    for row in file[name]:
+        items.add(row)
+    return items
 
 
 # Returns Split String based on Commodity and Unit
@@ -103,6 +95,7 @@ def write_units(units):
             for u in v:
                 line = k + " = " +  u.strip("'")  + '\n'
                 config.write(line)
+
 
 # TODO: Same as above
 def write_header(header):
