@@ -5,11 +5,6 @@ import os
 import pandas as pd
 from sys import argv
 
-# Returns Product if present else returns Commodity
-def get_com_or_pro(col):
-    if col.contains("Product"):
-        return "Product"
-    return "Commodity"
 
 # Reads Unit Config File
 # Commodity and Unit seperated by an equals sign " = "
@@ -34,6 +29,13 @@ def read_hconfig():
 # Returns Header List based on Excel file
 def get_header(file):
     return list(file.columns)
+
+
+# Returns Product if present else returns Commodity
+def get_com_or_pro(col):
+    if col.contains("Product"):
+        return "Product"
+    return "Commodity"
 
 
 # Returns Unit Dictionary on Excel file
