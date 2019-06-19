@@ -3,6 +3,7 @@ __author__ = "Edward Chang"
 from math import isnan
 import os
 import pandas as pd
+import pickle
 from sys import argv
 
 
@@ -10,7 +11,7 @@ from sys import argv
 # Commodity and Unit seperated by an equals sign " = "
 def read_uconfig(type):
     units = {}
-    with open("config/" + type + "unitdef.cfg") as udef:
+    with open("config/" + type + "unitdef.txt") as udef:
         for line in udef:
             split = line.split(" = ")
             add_item(split[0], split[1].strip(), units)
@@ -20,16 +21,20 @@ def read_uconfig(type):
 # Reads Header Config File
 def read_hconfig(type):
     columns = []
-    with open("config/" + type + "headerdef.cfg") as hdef:
+    with open("config/" + type + "headerdef.txt") as hdef:
         columns = [line.strip() for line in hdef]
     return columns
 
 
 def get_data_type(name):
+    type = ""
+    if "federal" in name:
+        type += "f"
     if "production" in name:
-        return "p"
+        type += "p"
     elif "revenue" in name:
-        return "r"
+        type += "r"
+    return type
 
 # Returns Header List based on Excel file
 def get_header(file):
@@ -96,7 +101,7 @@ def add_item(key, value, dictionary):
 # Wrties to config to speed up process later
 # TODO: Maybe have it write seperate files for each type?
 def write_units(units, type):
-    with open("config/" + type + "unitdef.cfg", "w") as config:
+    with open("config/" + type + "unitdef.txt", "w") as config:
         for k,v in units.items():
             for u in v:
                 line = k + " = " +  u.strip("'")  + '\n'
@@ -105,7 +110,7 @@ def write_units(units, type):
 
 # TODO: Same as above
 def write_header(header, type):
-    with open("config/" + type + "headerdef.cfg","w") as config:
+    with open("config/" + type + "headerdef.txt","w") as config:
         for field in header:
             config.write(field + '\n')
 

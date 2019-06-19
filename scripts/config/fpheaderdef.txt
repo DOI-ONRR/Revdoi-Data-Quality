@@ -1,0 +1,10 @@
+Calendar Year
+Land Category
+Land Class
+State
+County
+FIPS Code
+Offshore Region
+Offshore Planning Area
+Product
+Volume
