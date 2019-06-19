@@ -1,18 +1,12 @@
 __author__ = "Edward Chang"
 
+from math import isnan
 import os
 import pandas as pd
 from sys import argv
 
-# Returns Product if present else returns Commodity
-def get_com_or_pro(col):
-    if col.contains("Product"):
-        return "Product"
-    return "Commodity"
-
 # Reads Unit Config File
 # Commodity and Unit seperated by an equals sign " = "
-# Fast, Best for small number of Units / after initial read
 def read_uconfig():
     units = {}
     with open("config/unitdef.txt") as udef:
@@ -26,19 +20,23 @@ def read_uconfig():
 def read_hconfig():
     columns = []
     with open("config/headerdef.txt") as hdef:
-        for line in hdef:
-            columns.append(line.strip())
+        columns = [line.strip() for line in hdef]
     return columns
 
 
 # Returns Header List based on Excel file
-# Use if large amount of Field Names
 def get_header(file):
     return list(file.columns)
 
 
+# Returns Product if present else returns Commodity
+def get_com_or_pro(col):
+    if col.contains("Product"):
+        return "Product"
+    return "Commodity"
+
+
 # Returns Unit Dictionary on Excel file
-# Very Slow, but better than manually setting large # of units
 def get_unit_dict(file):
     units = {}
     col = get_com_or_pro(file.columns)
@@ -50,25 +48,18 @@ def get_unit_dict(file):
     return units
 
 
-def get_land_classes(file):
-    classes = set()
-    for row in file['Land Class']:
-        classes.add(row)
-    return classes
+# Returns a set based on Field given
+def get_column(file, col):
+    return {row for row in file[col]}
 
 
-def get_land_categories(file):
-    categories = set()
-    for row in file['Land Categories']:
-        categories.add(row)
-    return categories
-
-
-def get_states(file):
-    states = set()
-    for row in file['State']:
-        categories.add(row)
-    return states
+# Returns number of W's in column
+def get_w_count(file, col):
+    w_count = 0
+    for row in file[col]:
+        if row == 'W':
+            w_count += 1
+    return w_count
 
 
 # Returns Split String based on Commodity and Unit
