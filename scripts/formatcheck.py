@@ -3,9 +3,7 @@ __author__ = "Edward Chang"
 from math import isnan
 import os
 import pandas as pd
-import pickle
 from sys import argv
-
 
 # Reads Unit Config File
 # Commodity and Unit seperated by an equals sign " = "
@@ -60,9 +58,11 @@ def get_unit_dict(file):
     return units
 
 
+col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
 # Returns a set based on Field given
 def get_column(file, col):
-    return {row for row in file[col]}
+    if col not in col_wlist:
+        return {row for row in file[col]}
 
 
 # Returns number of W's in column
@@ -153,6 +153,11 @@ def check_unit_dict(file, default):
     if not bad:
         print('No Errors Found :)')
 
+def check_misc_cols(file, default):
+    index = 0
+    for row in file[col]:
+        if row not in default:
+            print(row + ' ' + str(index) + ': Unknown Input: ' + line[0])
 
 # Reports if a row is NaN for a certain column
 def check_nan(file, col):
@@ -180,10 +185,11 @@ def main():
         file = pd.read_excel(argv[1])
         default_header = read_hconfig(type)
         default_units = read_uconfig(type)
-        print('\n')
         check_header(file, default_header)
-        print('\n')
-        check_unit_dict(file, default_units)
+        check_unit_dict(file, default_units
+
+        for col in default_header:
+            print(get_column(file,col))
 
 if __name__ == '__main__':
     main()
