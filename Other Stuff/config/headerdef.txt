@@ -1,1 +1,0 @@
-Calendar Year,Product,State/Offshore Region,FIPS Code,CPS/Planning Area,Production Volume,Onshore/Offshore,Category,
