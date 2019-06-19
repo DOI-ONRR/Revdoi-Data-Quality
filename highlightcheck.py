@@ -143,6 +143,13 @@ def check_unit_dict(file, default):
         print('No Errors Found :)')
 
 
+# Reports if a row is NaN for a certain column
+def check_nan(file, col):
+    for i in range(len(file)):
+        if isnan(row):
+            print("Row " + str(i) + ": Missing " + col)
+
+
 def setup(pathname):
     sample = pd.read_excel(pathname)
     if not os.path.exists('config'):
