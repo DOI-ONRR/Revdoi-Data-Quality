@@ -34,28 +34,12 @@ def get_data_type(name):
         type += "r"
     return type
 
-# Returns Header List based on Excel file
-def get_header(file):
-    return list(file.columns)
-
 
 # Returns Product if present else returns Commodity
 def get_com_or_pro(col):
     if col.contains("Product"):
         return "Product"
     return "Commodity"
-
-
-# Returns Unit Dictionary on Excel file
-def get_unit_dict(file):
-    units = {}
-    col = get_com_or_pro(file.columns)
-    for row in file[col]:
-        # Key and Value split
-        line = split_unit(row)
-        k,v = line[0], line[1]
-        add_item(k,v,units)
-    return units
 
 
 col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
@@ -96,23 +80,6 @@ def add_item(key, value, dictionary):
     # Else adds new key with value
     else:
         dictionary[key] = {value}
-
-
-# Wrties to config to speed up process later
-# TODO: Maybe have it write seperate files for each type?
-def write_units(units, type):
-    with open("config/" + type + "unitdef.txt", "w") as config:
-        for k,v in units.items():
-            for u in v:
-                line = k + " = " +  u.strip("'")  + '\n'
-                config.write(line)
-
-
-# TODO: Same as above
-def write_header(header, type):
-    with open("config/" + type + "headerdef.txt","w") as config:
-        for field in header:
-            config.write(field + '\n')
 
 
 def check_header(file, default):
@@ -159,6 +126,7 @@ def check_misc_cols(file, default):
         if row not in default:
             print(row + ' ' + str(index) + ': Unknown Input: ' + line[0])
 
+
 # Reports if a row is NaN for a certain column
 def check_nan(file, col):
     for i in range(len(file)):
@@ -166,28 +134,13 @@ def check_nan(file, col):
             print("Row " + str(i) + ": Missing " + col)
 
 
-def setup(pathname, type):
-    sample = pd.read_excel(pathname)
-    if not os.path.exists('config'):
-        print('No Config Folder found. Creating folder...')
-        os.mkdir('config')
-    write_header(get_header(sample), type)
-    write_units(get_unit_dict(sample), type)
-    print("Setup Complete")
-
-
 def main():
-    print(argv[1])
-    if argv[1].lower() == 'setup':
-        type = get_data_type(argv[2])
-        setup(argv[2], type)
-    else:
-        type = get_data_type(argv[1])
-        file = pd.read_excel(argv[1])
-        default_header = read_hconfig(type)
-        default_units = read_uconfig(type)
-        check_header(file, default_header)
-        check_unit_dict(file, default_units)
+    type = get_data_type(argv[1])
+    file = pd.read_excel(argv[1])
+    default_header = read_hconfig(type)
+    default_units = read_uconfig(type)
+    check_header(file, default_header)
+    check_unit_dict(file, default_units)
 
 
 if __name__ == '__main__':
