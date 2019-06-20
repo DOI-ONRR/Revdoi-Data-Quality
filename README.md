@@ -1,5 +1,5 @@
 # Data-Quality-Checker
-I'll put notes here. Feel free to give feedback... or snacks
+I'll put notes here. Feel free to give feedback
 
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
