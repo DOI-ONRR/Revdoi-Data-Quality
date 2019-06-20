@@ -177,6 +177,7 @@ def setup(pathname, type):
 
 
 def main():
+    print(argv[1])
     if argv[1].lower() == 'setup':
         type = get_data_type(argv[2])
         setup(argv[2], type)
@@ -186,10 +187,8 @@ def main():
         default_header = read_hconfig(type)
         default_units = read_uconfig(type)
         check_header(file, default_header)
-        check_unit_dict(file, default_units
+        check_unit_dict(file, default_units)
 
-        for col in default_header:
-            print(get_column(file,col))
 
 if __name__ == '__main__':
     main()
