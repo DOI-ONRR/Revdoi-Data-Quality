@@ -26,7 +26,7 @@ Format Check:
       * How to Run: **_python diff.py "oldFile" "newFile"_**
 * Will work on other scripts soon
     1. Formatting (Order, Units, etc.) [Main Priority]
-    2. Historical Data (Standard Deviation) [Backlog]
+    2. Aggregate Data(Standard Deviation) [Backlog]
 
 [6/17]
 * Unit Dictionary: Mostly done
@@ -40,7 +40,10 @@ Format Check:
   * Check File: **_python datachecker.py "pathname"_**
 * Unit Dictionary: Done
 * Other fields?: wip
-* Historical Data: wip
+* Aggregate Data: wip
 
 [6/19]
 * Reorganization of files
+
+[6/20]
+* Transfered repo from personal to ONRR
