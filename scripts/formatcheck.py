@@ -1,7 +1,6 @@
 __author__ = "Edward Chang"
 
 from math import isnan
-import os
 import pandas as pd
 from sys import argv
 
