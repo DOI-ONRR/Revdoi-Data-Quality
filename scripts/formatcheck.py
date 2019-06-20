@@ -119,6 +119,7 @@ def check_unit_dict(file, default):
     if not bad:
         print('No Errors Found :)')
 
+
 def check_misc_cols(file, default):
     index = 0
     for row in file[col]:
