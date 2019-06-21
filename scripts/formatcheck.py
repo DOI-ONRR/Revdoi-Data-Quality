@@ -5,7 +5,7 @@ import pandas as pd
 from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
-'''# Reads Unit Config File
+''' Reads Unit Config File
 Commodity and Unit seperated by an equals sign " = " '''
 def read_uconfig(type):
     units = {}
