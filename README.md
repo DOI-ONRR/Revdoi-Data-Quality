@@ -1,7 +1,7 @@
 # Data-Quality-Checker
 I'll put notes here. Feel free to give feedback
 
-Be sure to change directory to where the script is located using **_cd "pathname"**
+Be sure to change directory to where the script is located using **_cd "pathname_"**
 
 Examples of pathname
 * Full pathname: "C:/Users/name/.../filename.extension"
