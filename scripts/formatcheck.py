@@ -2,6 +2,7 @@ __author__ = "Edward Chang"
 
 from math import isnan
 import pandas as pd
+from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
 # Reads Unit Config File
@@ -23,24 +24,6 @@ def read_hconfig(type):
     return columns
 
 
-def get_data_type(name):
-    type = ""
-    if "federal" in name:
-        type += "f"
-    if "production" in name:
-        type += "p"
-    elif "revenue" in name:
-        type += "r"
-    return type
-
-
-# Returns Product if present else returns Commodity
-def get_com_or_pro(col):
-    if col.contains("Product"):
-        return "Product"
-    return "Commodity"
-
-
 col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
 # Returns a set based on Field given
 def get_column(file, col):
@@ -56,29 +39,6 @@ def get_w_count(file, col):
             w_count += 1
     return w_count
 
-
-# Returns Split String based on Commodity and Unit
-def split_unit(string):
-    string = str(string)
-    # For general purpose commodities
-    if "(" in string:
-        split = string.rsplit(" (",1)
-        split[1] = split[1].rstrip(")")
-        return split
-    # The comma is for Geothermal
-    elif "," in string:
-        return string.split(", ",1)
-    # In case no unit is found
-    return [string,'']
-
-
-def add_item(key, value, dictionary):
-    # Adds Value to Set if Key exists
-    if key in dictionary:
-        dictionary[key].add(value)
-    # Else adds new key with value
-    else:
-        dictionary[key] = {value}
 
 
 def check_header(file, default):
@@ -103,7 +63,7 @@ def check_header(file, default):
 def check_unit_dict(file, default):
     index = 0
     bad = False
-    col = get_com_or_pro(file.columns)
+    col = get_com_pro(file.columns)
     for u in file[col]:
         # Splits line by Item and Unit
         line = split_unit(u)
@@ -139,6 +99,7 @@ def main():
     file = pd.read_excel(argv[1])
     default_header = read_hconfig(type)
     default_units = read_uconfig(type)
+    print()
     check_header(file, default_header)
     check_unit_dict(file, default_units)
 

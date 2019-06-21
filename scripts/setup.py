@@ -2,18 +2,8 @@ __author__ = "Edward Chang"
 
 import os
 import pandas as pd
+from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
-
-
-def get_data_type(name):
-    type = ""
-    if "federal" in name:
-        type += "f"
-    if "production" in name:
-        type += "p"
-    elif "revenue" in name:
-        type += "r"
-    return type
 
 
 # Returns Header List based on Excel file
@@ -24,7 +14,7 @@ def get_header(file):
 # Returns Unit Dictionary on Excel file
 def get_unit_dict(file):
     units = {}
-    col = get_com_or_pro(file.columns)
+    col = get_com_pro(file.columns)
     for row in file[col]:
         # Key and Value split
         line = split_unit(row)
