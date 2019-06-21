@@ -24,13 +24,6 @@ def read_hconfig(type):
     return columns
 
 
-col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
-''' Returns a set based on Field given '''
-def get_column(file, col):
-    if col not in col_wlist:
-        return {row for row in file[col]}
-
-
 ''' Returns number of W's in a given column '''
 def get_w_count(file, col):
     w_count = 0
@@ -85,9 +78,8 @@ def check_unit_dict(file, default):
 ''' For checking non-numerical columns '''
 def check_misc_cols(file, default):
     index = 0
-    for row in file[col]:
-        if row not in default:
-            print(row + ' ' + str(index) + ': Unknown Input: ' + line[0])
+    for field in default:
+        pass
 
 
 ''' Reports if a column is missing values '''

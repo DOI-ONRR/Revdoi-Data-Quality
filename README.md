@@ -17,13 +17,6 @@ Format Check:
 [6/19]
 * Reorganization of files
 
-
-[6/12]
-* Can now create Unit Dictionary
-    * Configuration file or Read sample Excel File
-* Can now create Header format
-    * Same as above
-
 [6/18]
 * Format check now usable in Terminal
   * Setup: **_python setup.py "sampleFile"_**
@@ -49,3 +42,10 @@ Format Check:
 * Will work on other scripts soon
     1. Formatting (Order, Units, etc.) [Main Priority]
     2. Aggregate Data(Standard Deviation) [Backlog]
+
+
+[6/12]
+* Can now create Unit Dictionary
+    * Configuration file or Read sample Excel File
+* Can now create Header format
+    * Same as above

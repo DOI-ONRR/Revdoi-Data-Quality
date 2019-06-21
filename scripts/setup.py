@@ -5,7 +5,6 @@ import pandas as pd
 from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
-
 """ Returns Header List based on Excel file
 Keyword arguements:
 file -- A Pandas DataFrame
@@ -27,10 +26,13 @@ def get_unit_dict(file):
 
 
 col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
-# Returns a set based on Field given
-def get_column(file, col):
-    if col not in col_wlist:
-        return {row for row in file[col]}
+''' Returns a dictionary of fields not listed in col_wlist '''
+def get_misc_cols(file):
+    fields = {}
+    for col in file.columns:
+        if col not in col_wlist:
+            fields[col] = { i for i in file[col] }
+    return fields
 
 
 """ Writes a text file as on item and expected units of measurement """
@@ -49,6 +51,12 @@ def write_header(header, type):
             config.write(field + '\n')
 
 
+def write_misc_cols(cols, type):
+    with open("config/" + type + "fielddef.txt","w") as config:
+        for c in cols:
+            config.write(c + '\n')
+
+
 """ Writing happens here """
 def setup(pathname, type):
     sample = pd.read_excel(pathname)
@@ -57,6 +65,7 @@ def setup(pathname, type):
         os.mkdir('config')
     write_header(get_header(sample), type)
     write_units(get_unit_dict(sample), type)
+    write_misc_cols(get_misc_cols(sample), type)
     print("Setup Complete")
 
 
