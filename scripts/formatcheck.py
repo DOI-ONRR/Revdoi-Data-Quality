@@ -5,8 +5,8 @@ import pandas as pd
 from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
-# Reads Unit Config File
-# Commodity and Unit seperated by an equals sign " = "
+'''# Reads Unit Config File
+Commodity and Unit seperated by an equals sign " = " '''
 def read_uconfig(type):
     units = {}
     with open("config/" + type + "unitdef.txt") as udef:
@@ -16,7 +16,7 @@ def read_uconfig(type):
     return units
 
 
-# Reads Header Config File
+''' Reads Header Config File '''
 def read_hconfig(type):
     columns = []
     with open("config/" + type + "headerdef.txt") as hdef:
@@ -25,13 +25,13 @@ def read_hconfig(type):
 
 
 col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
-# Returns a set based on Field given
+''' Returns a set based on Field given '''
 def get_column(file, col):
     if col not in col_wlist:
         return {row for row in file[col]}
 
 
-# Returns number of W's in column
+''' Returns number of W's in a given column '''
 def get_w_count(file, col):
     w_count = 0
     for row in file[col]:
@@ -40,7 +40,8 @@ def get_w_count(file, col):
     return w_count
 
 
-
+''' Checks header for any inconsistences
+i.e. Order, missing or unexpected fields'''
 def check_header(file, default):
     columns = file.columns
     uncheckedCols = set(columns)
@@ -50,16 +51,17 @@ def check_header(file, default):
             if columns[i] == default[i]:
                 print(default[i] + ": True")
             else:
-                print(default[i] + ": Wrong order")
+                print(default[i] + ": Unexpected order")
             uncheckedCols.remove(default[i])
         else:
             # Field not present in the file
-            print(default[i] + ": N/A")
+            print(default[i] + ": Not Present")
     # Prints all fields not in the format
     if len(uncheckedCols) > 0:
         print("\nNew Cols:", uncheckedCols)
 
-
+''' Checks commodities/products for inconsistences
+i.e. New items, Unexpected units of measurement '''
 def check_unit_dict(file, default):
     index = 0
     bad = False
@@ -70,7 +72,7 @@ def check_unit_dict(file, default):
         # Checks if Item is valid and has correct units
         if default.__contains__(line[0]):
             if line[1] not in default.get(line[0]):
-                print('Row ' + str(index) + ': Unknown Unit - (' + line[1]  + ') [For Item: ' + line[0] + ']')
+                print('Row ' + str(index) + ': Expected Unit - (' + line[1]  + ') [For Item: ' + line[0] + ']')
                 bad = True
         else:
             print('Row ' + str(index) + ': Unknown Item: ' + line[0])
@@ -80,6 +82,7 @@ def check_unit_dict(file, default):
         print('No Errors Found :)')
 
 
+''' For checking non-numerical columns '''
 def check_misc_cols(file, default):
     index = 0
     for row in file[col]:
@@ -87,7 +90,7 @@ def check_misc_cols(file, default):
             print(row + ' ' + str(index) + ': Unknown Input: ' + line[0])
 
 
-# Reports if a row is NaN for a certain column
+''' Reports if a column is missing values '''
 def check_nan(file, col):
     for i in range(len(file)):
         if isnan(row):

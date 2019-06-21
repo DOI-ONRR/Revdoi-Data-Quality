@@ -6,12 +6,15 @@ from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
 
-# Returns Header List based on Excel file
+""" Returns Header List based on Excel file
+Keyword arguements:
+file -- A Pandas DataFrame
+"""
 def get_header(file):
     return list(file.columns)
 
 
-# Returns Unit Dictionary on Excel file
+""" Returns Unit Dictionary on Excel file"""
 def get_unit_dict(file):
     units = {}
     col = get_com_pro(file.columns)
@@ -30,8 +33,7 @@ def get_column(file, col):
         return {row for row in file[col]}
 
 
-# Wrties to config to speed up process later
-# TODO: Maybe have it write seperate files for each type?
+""" Writes a text file as on item and expected units of measurement """
 def write_units(units, type):
     with open("config/" + type + "unitdef.txt", "w") as config:
         for k,v in units.items():
@@ -40,13 +42,14 @@ def write_units(units, type):
                 config.write(line)
 
 
-# TODO: Same as above
+""" Writes a text file based on a given header format """
 def write_header(header, type):
     with open("config/" + type + "headerdef.txt","w") as config:
         for field in header:
             config.write(field + '\n')
 
 
+""" Writing happens here """
 def setup(pathname, type):
     sample = pd.read_excel(pathname)
     if not os.path.exists('config'):

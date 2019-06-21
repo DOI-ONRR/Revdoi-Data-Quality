@@ -1,3 +1,4 @@
+""" Mostly for naming the config files """
 def get_data_type(name):
     type = ""
     if "federal" in name:
@@ -8,7 +9,7 @@ def get_data_type(name):
         type += "r"
     return type
 
-# Returns Split String based on Commodity and Unit
+""" Returns a list of the split string based on item and unit """
 def split_unit(string):
     string = str(string)
     # For general purpose commodities
@@ -22,7 +23,12 @@ def split_unit(string):
     # In case no unit is found
     return [string,'']
 
-
+""" Adds key to dictionary if not present. Else adds value to key set.
+Keyword arguements:
+key -- Key entry for the dict, e.g. A commodity
+value -- Value entry corresponding to key, e.g. Unit or Value
+dictionary -- Reference to dictionary
+"""
 def add_item(key, value, dictionary):
     # Adds Value to Set if Key exists
     if key in dictionary:
@@ -31,7 +37,7 @@ def add_item(key, value, dictionary):
     else:
         dictionary[key] = {value}
 
-# Returns Product if present else returns Commodity
+# Will probably have to get rid of this soon
 def get_com_pro(col):
     if col.contains("Product"):
         return "Product"
