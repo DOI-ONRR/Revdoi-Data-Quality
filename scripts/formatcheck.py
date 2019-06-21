@@ -2,6 +2,7 @@ __author__ = "Edward Chang"
 
 from math import isnan
 import pandas as pd
+import pickle
 from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
@@ -9,19 +10,27 @@ from sys import argv
 Commodity and Unit seperated by an equals sign " = " '''
 def read_uconfig(type):
     units = {}
-    with open("config/" + type + "unitdef.txt") as udef:
-        for line in udef:
-            split = line.split(" = ")
-            add_item(split[0], split[1].strip(), units)
+    with open("config/" + type + "unitdict.bin", "rb") as udef:
+        units = pickle.load(udef)
     return units
 
 
 ''' Reads Header Config File '''
 def read_hconfig(type):
     columns = []
-    with open("config/" + type + "headerdef.txt") as hdef:
-        columns = [line.strip() for line in hdef]
+    with open("config/" + type + "headerlist.bin", "rb") as hdef:
+        columns = pickle.load(hdef)
     return columns
+
+
+''' Reads Unit Config File
+Commodity and Unit seperated by an equals sign " = " '''
+def read_fconfig(type):
+    fields = {}
+    with open("config/" + type + "fielddict.bin", "rb") as fdef:
+        fields = pickle.load(fdef)
+    return fields
+
 
 
 ''' Returns number of W's in a given column '''
@@ -72,14 +81,16 @@ def check_unit_dict(file, default):
             bad = True
         index+=1
     if not bad:
-        print('No Errors Found :)')
+        print("All units valid :)")
 
 
 ''' For checking non-numerical columns '''
 def check_misc_cols(file, default):
     index = 0
     for field in default:
-        pass
+        for i in file[field]:
+            if i not in default.get(field):
+                print('Row ' + str(index) + ': Unexpected Entry: ' + i)
 
 
 ''' Reports if a column is missing values '''
@@ -94,9 +105,14 @@ def main():
     file = pd.read_excel(argv[1])
     default_header = read_hconfig(type)
     default_units = read_uconfig(type)
+    default_fields = read_fconfig(type)
     print()
     check_header(file, default_header)
     check_unit_dict(file, default_units)
+    check_misc_cols(file, default_fields)
+    print(default_header)
+    print(default_units)
+    print(default_fields)
 
 
 if __name__ == '__main__':

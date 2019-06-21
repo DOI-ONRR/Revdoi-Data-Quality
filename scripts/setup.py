@@ -8,6 +8,7 @@ __author__ = "Edward Chang"
 
 import os
 import pandas as pd
+import pickle
 from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
@@ -43,24 +44,19 @@ def get_misc_cols(file):
 
 """ Writes a text file as on item and expected units of measurement """
 def write_units(units, type):
-    with open("config/" + type + "unitdef.txt", "w") as config:
-        for k,v in units.items():
-            for u in v:
-                line = k + " = " +  u.strip("'")  + '\n'
-                config.write(line)
+    with open("config/" + type + "unitdict.bin", "wb") as config:
+        pickle.dump(units, config)
 
 
 """ Writes a text file based on a given header format """
 def write_header(header, type):
-    with open("config/" + type + "headerdef.txt","w") as config:
-        for field in header:
-            config.write(field + '\n')
+    with open("config/" + type + "headerlist.bin","wb") as config:
+        pickle.dump(header, config)
 
 
 def write_misc_cols(cols, type):
-    with open("config/" + type + "fielddef.txt","w") as config:
-        for c in cols:
-            config.write(c + '\n')
+    with open("config/" + type + "fielddict.bin","wb") as config:
+        pickle.dump(cols, config)
 
 
 """ Writing happens here """
