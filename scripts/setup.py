@@ -1,3 +1,9 @@
+# potato = [1,2,3,4,5,6]
+# with open('potato.bin', mode= 'wb') as file:
+#     pickle.dump(potato, file)
+# yam = pickle.load(open('potato.bin', 'rb'))
+# print(yam)
+
 __author__ = "Edward Chang"
 
 import os
