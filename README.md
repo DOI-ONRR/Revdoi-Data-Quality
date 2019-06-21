@@ -4,8 +4,8 @@ I'll put notes here. Feel free to give feedback
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
 Format Check:
-* Setup: **_python datachecker.py setup "sampleFile"_**
-* Check File: **_python datachecker.py "pathname"_**
+* Setup: **_python setup.py "sampleFile"_**
+* Check File: **_python formatcheck.py "pathname"_**
 
 [More Details](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
 
@@ -47,3 +47,4 @@ Format Check:
 
 [6/20]
 * Transfered repo from personal to ONRR
+* Seperated setup and format_check
