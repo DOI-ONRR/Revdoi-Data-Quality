@@ -22,7 +22,8 @@ Format Check:
 
 ## Progress so far
 [6/24]
-* Mics cols: Ready?
+* Misc. cols: Ready?
+* W count: Ready?
 * Numerical Fields: wip
 
 [6/21]
