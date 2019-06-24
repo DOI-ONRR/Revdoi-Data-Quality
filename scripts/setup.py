@@ -24,7 +24,7 @@ def get_header(file):
 def get_unit_dict(file):
     units = {}
     col = get_com_pro(file.columns)
-    if col == "both":
+    if col == "n/a":
         return
     for row in file[col]:
         # Key and Value split

@@ -1,3 +1,0 @@
-Gas Prod Vol = mcf
-Oil Prod Vol = bbl
-Coal Prod Vol = ton

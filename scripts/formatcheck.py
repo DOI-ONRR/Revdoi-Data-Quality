@@ -69,7 +69,7 @@ def check_unit_dict(file, default):
     index = 0
     bad = False
     col = get_com_pro(file.columns)
-    if col == "both":
+    if col == "n/a":
         return "No Units Available"
     for u in file[col]:
         bad = check_unit(u)

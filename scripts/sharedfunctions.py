@@ -1,19 +1,29 @@
 """ Mostly for naming the config files """
 def get_data_type(name):
     type = ""
-    if "Native" in name:
-        type += "n"
-    if "CY" in name:
-        type += "CY"
-    if "FY" in name:
-        type += "FY"
-    if "federal" in name:
-        type += "f"
-    if "production" in name:
+    lower = name.lower()
+    if "cy" in lower:
+        type += "cy"
+    elif "fy" in lower:
+        type += "fy"
+    elif "month" in lower:
+        type += "m"
+
+    if "fed" in lower:
+        type += "fed"
+    elif "native" in lower:
+        type += "na"
+    elif "company" in lower:
+        type += "com"
+
+    if "product" in lower:
         type += "p"
-    if "revenue" in name:
+    elif "rev" in lower:
         type += "r"
-    return type
+    elif "disburse" in lower:
+        type += "d"
+
+    return type + "_"
 
 """ Returns a list of the split string based on item and unit """
 def split_unit(string):
@@ -45,9 +55,11 @@ def add_item(key, value, dictionary):
 
 # Being reworked
 def get_com_pro(col):
+    if not col.contains("Product") and not col.contains("Commodity"):
+        return "n/a"
     if col.contains("Product"):
-        if col.cotains("Commodity"):
-            return"both"
+        if col.contains("Commodity"):
+            return"n/a"
         else:
             return "Product"
     return "Commodity"
