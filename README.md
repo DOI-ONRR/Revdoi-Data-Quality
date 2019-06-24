@@ -17,6 +17,10 @@ Format Check:
 [More Details](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
 
 ## Progress so far
+[6/24]
+* Mics cols: Ready?
+* Numerical Fields: wip
+
 [6/21]
 * PICKLES
 
