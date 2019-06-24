@@ -78,14 +78,14 @@ def check_unit_dict(file, default):
     if col == "n/a":
         return "No Units Available"
     for u in file[col]:
-        bad = _check_unit(u, default)
+        bad = _check_unit(u, default, index)
         index+=1
     if not bad:
-        print "All units valid :)"
+        print("All units valid :)")
 
 
 ''' Helper method for check_unit_dict '''
-def _check_unit(string, default):
+def _check_unit(string, default, index):
     # Splits line by Item and Unit
     line = split_unit(string)
     # Checks if Item is valid and has correct units
@@ -104,8 +104,8 @@ def check_misc_cols(file, default):
     for field in default:
         index = 0
         for i in file[field]:
-            if i not in default.get(field) and i != 'n/a':
-                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + i)
+            if i not in default.get(field) and not isnan(i):
+                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + str(i))
                 bad = True
             index += 1
     if not bad:
@@ -122,7 +122,7 @@ def check_nan(file, col):
 ''' Where all the stuff is ran '''
 def main():
     type = get_data_type(argv[1])
-    file = pd.read_excel(argv[1]).fillna('n/a')
+    file = pd.read_excel(argv[1])
 
     default_header = read_hconfig(type)
     default_units = read_uconfig(type)

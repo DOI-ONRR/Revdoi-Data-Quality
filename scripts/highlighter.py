@@ -72,14 +72,14 @@ def check_unit_dict(file, default):
     if col == "n/a":
         return "No Units Available"
     for u in file[col]:
-        bad = check_unit(u, file)
+        bad = check_unit(u, file, index)
         index+=1
     if not bad:
         print("All units valid :)")
 
 
 ''' Helper method for check_unit_dict '''
-def _check_unit(string, file):
+def _check_unit(string, file, index):
     # Splits line by Item and Unit
     line = split_unit(string)
     # Checks if Item is valid and has correct units
@@ -100,8 +100,8 @@ def check_misc_cols(file, default):
     for field in default:
         index = 0
         for i in file[field]:
-            if i not in default.get(field) and i != 'n/a':
-                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + i)
+            if i not in default.get(field) and not isnan(i):
+                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + str(i))
                 file.loc[index, field] = '[New Item]' + i
                 bad = True
             index += 1
