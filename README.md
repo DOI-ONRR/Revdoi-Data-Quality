@@ -1,6 +1,8 @@
 # Data-Quality-Checker
 I'll put notes here. Feel free to give feedback
 
+Suggestion: Run py scripts through Anaconda Powershell
+
 Stuff I ~stole~ borrowed:
 * Excel diff: https://matthewkudija.com/blog/2018/07/21/excel-diff/
 
