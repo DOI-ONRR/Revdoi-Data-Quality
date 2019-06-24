@@ -72,14 +72,14 @@ def check_unit_dict(file, default):
     if col == "n/a":
         return "No Units Available"
     for u in file[col]:
-        bad = check_unit(u)
+        bad = _check_unit(u, default)
         index+=1
     if not bad:
         print("All units valid :)")
 
 
 ''' Helper method for check_unit_dict '''
-def _check_unit(string):
+def _check_unit(string, default):
     # Splits line by Item and Unit
     line = split_unit(string)
     # Checks if Item is valid and has correct units
