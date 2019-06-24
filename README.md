@@ -7,9 +7,9 @@ Stuff I ~stole~ borrowed:
 Be sure to change directory to where the py script is located using **_cd "pathname_"**
 
 Examples of pathname
-* Full pathname: "C:/Users/name/.../filename.extension"
-* Local pathname: "files/filename.extension"
-* For going back a folder: "../files/filename.extension"
+* Full pathname: "C:/Users/name/.../foldername"
+* Local pathname: "foldername"
+* For going back a folder: ".."
 
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 

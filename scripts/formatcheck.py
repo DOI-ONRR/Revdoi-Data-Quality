@@ -33,13 +33,19 @@ def read_fconfig(type):
 
 
 
-''' Returns number of W's in a given column '''
-def get_w_count(file, col):
-    w_count = 0
-    for row in file[col]:
-        if row == 'W':
-            w_count += 1
-    return w_count
+''' Returns number of W's found'''
+def get_w_count(file):
+    volume_w_count = 0
+    state_w_count = 0
+    if file.columns.contains("Volume"):
+        for row in file["Volume"]:
+            if row == 'W':
+                volume_w_count += 1
+    if file.columns.contains("State"):
+        for row in file["State"]:
+            if row == "Withheld":
+                state_w_count += 1
+    return volume_w_count, state_w_count
 
 
 ''' Checks header for any inconsistences
@@ -75,7 +81,7 @@ def check_unit_dict(file, default):
         bad = _check_unit(u, default)
         index+=1
     if not bad:
-        print("All units valid :)")
+        print "All units valid :)"
 
 
 ''' Helper method for check_unit_dict '''
@@ -113,6 +119,7 @@ def check_nan(file, col):
             print("Row " + str(i) + ": Missing " + col)
 
 
+''' Where all the stuff is ran '''
 def main():
     type = get_data_type(argv[1])
     file = pd.read_excel(argv[1]).fillna('n/a')
@@ -123,8 +130,12 @@ def main():
 
     print()
     check_header(file, default_header)
+    print()
     check_unit_dict(file, default_units)
     check_misc_cols(file, default_fields)
+    w = get_w_count(file)
+    print("\n(Volume) W's Found: " + str(w[0]) )
+    print("(Location) W's Found: " + str(w[1]) )
 
 
 if __name__ == '__main__':
