@@ -1,11 +1,17 @@
 """ Mostly for naming the config files """
 def get_data_type(name):
     type = ""
+    if "Native" in name:
+        type += "n"
+    if "CY" in name:
+        type += "CY"
+    if "FY" in name:
+        type += "FY"
     if "federal" in name:
         type += "f"
     if "production" in name:
         type += "p"
-    elif "revenue" in name:
+    if "revenue" in name:
         type += "r"
     return type
 
