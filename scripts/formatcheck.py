@@ -68,20 +68,26 @@ def check_unit_dict(file, default):
     index = 0
     bad = False
     col = get_com_pro(file.columns)
+    if col == "both":
+        return "No Units Available"
     for u in file[col]:
-        # Splits line by Item and Unit
-        line = split_unit(u)
-        # Checks if Item is valid and has correct units
-        if default.__contains__(line[0]):
-            if line[1] not in default.get(line[0]):
-                print('Row ' + str(index) + ': Expected Unit - (' + line[1]  + ') [For Item: ' + line[0] + ']')
-                bad = True
-        else:
-            print('Row ' + str(index) + ': Unknown Item: ' + line[0])
-            bad = True
+        bad = check_unit(u)
         index+=1
     if not bad:
         print("All units valid :)")
+
+''' Helper method for check_unit_dict '''
+def _check_unit(string):
+    # Splits line by Item and Unit
+    line = split_unit(string)
+    # Checks if Item is valid and has correct units
+    if default.__contains__(line[0]):
+        if line[1] not in default.get(line[0]):
+            print('Row ' + str(index) + ': Expected Unit - (' + line[1]  + ') [For Item: ' + line[0] + ']')
+            return True
+    else:
+        print('Row ' + str(index) + ': Unknown Item: ' + line[0])
+        return True
 
 
 ''' For checking non-numerical columns '''

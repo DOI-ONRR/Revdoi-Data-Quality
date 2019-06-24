@@ -20,10 +20,12 @@ def get_header(file):
     return list(file.columns)
 
 
-""" Returns Unit Dictionary on Excel file"""
+""" Returns Unit Dictionary on Excel file """
 def get_unit_dict(file):
     units = {}
     col = get_com_pro(file.columns)
+    if col == "both":
+        return
     for row in file[col]:
         # Key and Value split
         line = split_unit(row)
@@ -32,7 +34,7 @@ def get_unit_dict(file):
     return units
 
 
-col_wlist = {'Calendar Year', 'Revenue', 'Volume', 'Month'}
+col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' }
 ''' Returns a dictionary of fields not listed in col_wlist '''
 def get_misc_cols(file):
     fields = {}

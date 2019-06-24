@@ -37,8 +37,11 @@ def add_item(key, value, dictionary):
     else:
         dictionary[key] = {value}
 
-# Will probably have to get rid of this soon
+# Being reworked
 def get_com_pro(col):
     if col.contains("Product"):
-        return "Product"
+        if col.cotains("Commodity"):
+            return"both"
+        else:
+            return "Product"
     return "Commodity"
