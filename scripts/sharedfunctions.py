@@ -9,12 +9,12 @@ def get_data_type(name):
     elif "month" in lower:
         type += "m"
 
+    if "company" in lower:
+        type += "com"
     if "fed" in lower:
         type += "fed"
     elif "native" in lower:
         type += "na"
-    elif "company" in lower:
-        type += "com"
 
     if "product" in lower:
         type += "p"
