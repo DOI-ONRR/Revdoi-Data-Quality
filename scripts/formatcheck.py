@@ -94,15 +94,17 @@ def _check_unit(string):
 
 ''' For checking non-numerical columns '''
 def check_misc_cols(file, default):
-    index = 0
     bad = False
     for field in default:
+        index = 0
         for i in file[field]:
-            if i not in default.get(field):
-                print('Row ' + str(index) + ': Unexpected Entry: ' + i)
+            if i not in default.get(field) and i != 'n/a':
+                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + i)
                 bad = True
+            index += 1
     if not bad:
         print("All fields valid")
+
 
 ''' Reports if a column is missing values '''
 def check_nan(file, col):
@@ -113,7 +115,7 @@ def check_nan(file, col):
 
 def main():
     type = get_data_type(argv[1])
-    file = pd.read_excel(argv[1])
+    file = pd.read_excel(argv[1]).fillna('n/a')
 
     default_header = read_hconfig(type)
     default_units = read_uconfig(type)
