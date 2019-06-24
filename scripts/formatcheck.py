@@ -62,6 +62,7 @@ def check_header(file, default):
     if len(uncheckedCols) > 0:
         print("\nNew Cols:", uncheckedCols)
 
+
 ''' Checks commodities/products for inconsistences
 i.e. New items, Unexpected units of measurement '''
 def check_unit_dict(file, default):
@@ -75,6 +76,7 @@ def check_unit_dict(file, default):
         index+=1
     if not bad:
         print("All units valid :)")
+
 
 ''' Helper method for check_unit_dict '''
 def _check_unit(string):
