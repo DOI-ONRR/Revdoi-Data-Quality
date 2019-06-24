@@ -14,8 +14,9 @@ Examples of pathname
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
 Format Check:
-* Setup: **_python setup.py "sampleFile"_**
 * Check File: **_python formatcheck.py "pathname"_**
+* Setup: **_python setup.py "sampleFile"_**
+ * Most of the setup should already be done.
 
 [More Details](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
 
