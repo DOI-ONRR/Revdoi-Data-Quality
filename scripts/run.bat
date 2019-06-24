@@ -6,7 +6,7 @@
 setlocal
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
-    python setup.py %%~I
+    python formatcheck.py %%~I
 )
 goto :EOF
 
@@ -14,7 +14,9 @@ goto :EOF
 
 Add-Type -AssemblyName System.Windows.Forms
 $f = new-object Windows.Forms.OpenFileDialog
-$f.InitialDirectory = ../files
+$f.InitialDirectory = pwd
 $f.Filter = "Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*"
 $f.ShowHelp = $true
+$f.Multiselect = $true
 [void]$f.ShowDialog()
+if ($f.Multiselect) { $f.FileNames } else { $f.FileName }
