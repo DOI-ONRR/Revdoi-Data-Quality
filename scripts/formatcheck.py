@@ -1,5 +1,6 @@
 __author__ = "Edward Chang"
 
+# Imports
 from math import isnan
 import os
 import pandas as pd
@@ -159,35 +160,12 @@ class Setup:
 """ For naming config files """
 def get_data_type(name):
     lower = name.lower()
-
-    def _get_when():
-        if "cy" in lower:
-            return "cy"
-        elif "fy" in lower:
-            return "fy"
-        elif "mo" in lower:
-            return "m"
-        return ""
-
-    def _get_who():
-        if "com" in lower:
-            return "com"
-        elif "fed" in lower:
-            return "fed"
-        elif "nat" in lower:
-            return "na"
-        return ""
-
-    def _get_what():
-        if "prod" in lower:
-            return "p"
-        elif "rev" in lower:
-            return "r"
-        elif "disb" in lower:
-            return "d"
-        return ""
-
-    return _get_when() + _get_who() + _get_what() + "_"
+    prefixes = ["cy","fy","monthly","company","federal","native","production","revenue","disbribution"]
+    final_prefix = ""
+    for p in prefixes:
+        if p in lower:
+            final_prefix += p
+    return final_prefix + "_"
 
 """ Returns a list of the split string based on item and unit """
 def split_unit(string):
