@@ -18,60 +18,14 @@ Examples of pathname
 
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
-**(DISCLAIMER)**
-I plan on refactoring the format check into a single script to clean up the code and configuration files.
-Execution will be different once it's fully implemented.
-
 Format Check:
 * Check File: **_python formatcheck.py "pathname"_**
-* Setup: **_python setup.py "sampleFile"_**
- * Most of the setup should already be done.
+* Setup: **_python formatcheck.py setup "sampleFile"_**
+ * Will have to redo most of the setup
 
 ## Progress so far
-[6/24]
-* Misc. cols: Ready?
-* W count: Ready?
-* Numerical Fields: wip
-
-[6/21]
-* PICKLES
-
-[6/20]
-* Transferred repo from personal to ONRR
-* Separated setup and format_check
-
-[6/19]
-* Reorganization of files
-
-[6/18]
-* Format check now usable in Terminal
-  * Setup: **_python setup.py "sampleFile"_**
-  * Check File: **_python formatcheck.py "pathname"_**
-* Unit Dictionary: Done
-* Other fields?: wip
-* Aggregate Data: wip
-
-[6/17]
-* Unit Dictionary: Mostly done
-* Column Check: Done
-* Other fields: wip
-* Will start working on aggregate data soon
-
-[6/13]
-* Cleaning up DIFF script
-    * Should now work through Terminal
-      * Prints out differences in Terminal and outputs Excel file
-        * Green = New
-        * Red with arrow = Changed
-        * Grey = Dropped
-      * How to Run: **_python diff.py "oldFile" "newFile"_**
-* Will work on other scripts soon
-    1. Formatting (Order, Units, etc.) [Main Priority]
-    2. Aggregate Data(Standard Deviation) [Backlog]
-
-
-[6/12]
-* Can now create Unit Dictionary
-    * Configuration file or Read sample Excel File
-* Can now create Header format
-    * Same as above
+Unit Dictionary: Ready
+Field Name Check: Ready
+Non-numerical Field Check: Ready
+N/A Check: wip
+Numerical Field Check: wip
