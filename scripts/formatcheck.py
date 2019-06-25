@@ -98,10 +98,15 @@ class FormatChecker:
             print("All fields valid")
 
     ''' Reports if a column is missing values '''
-    def check_nan(self, file, col):
-        for i in range(len(file)):
-            if isnan(row):
-                print("Row " + str(i) + ": Missing " + col)
+    def check_nan(self, file):
+        cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
+            "Mineral Lease Type", "Month", "Onshore/Offshore",
+            "Revenue", "Volume" ]
+        for col in cols:
+            if file.columns.contains(col):
+                for row in range(len(file.index)):
+                    if file.loc[row, col] == "-0":
+                        print("Row " + str(row) + ": Missing " + col)
 
 
 class Setup:
@@ -243,6 +248,7 @@ def main():
         check.check_header(file)
         check.check_unit_dict(file)
         check.check_misc_cols(file)
+        check.check_nan(file)
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]) )
         print("(Location) W's Found: " + str(w[1]) )
