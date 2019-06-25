@@ -222,12 +222,14 @@ def main():
 
         check = FormatChecker(type)
         check.check_header(file)
+        print()
         check.check_unit_dict(file)
         check.check_misc_cols(file)
         check.check_nan(file)
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]) )
         print("(Location) W's Found: " + str(w[1]) )
+        print("Done")
 
 if __name__ == '__main__':
     main()
