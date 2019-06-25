@@ -1,10 +1,13 @@
 # Data-Quality-Checker
 I'll put notes here. Feel free to give feedback
 
-Suggestion: Run py scripts through Anaconda Powershell
+[More Details](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
 
 Stuff I ~stole~ borrowed:
 * Excel diff: https://matthewkudija.com/blog/2018/07/21/excel-diff/
+
+## How to Use
+Suggestion: Run py scripts through Anaconda PowerShell
 
 Be sure to change directory to where the py script is located using **_cd "pathname_"**
 
@@ -23,8 +26,6 @@ Format Check:
 * Check File: **_python formatcheck.py "pathname"_**
 * Setup: **_python setup.py "sampleFile"_**
  * Most of the setup should already be done.
-
-[More Details](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
 
 ## Progress so far
 [6/24]
