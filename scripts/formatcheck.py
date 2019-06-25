@@ -71,14 +71,13 @@ class FormatChecker:
             return 0
 
         default = self.config.units
-        index = 0
         bad = 0
         col = get_com_pro(file.columns)
         if col == "n/a":
             return "No Units Available"
-        for u in file[col]:
-            bad += _check_unit(u, default, index)
-            index+=1
+        for row in range(len(file[col])):
+            cell = file.loc[row, col]
+            bad += _check_unit(cell, default, row)
         if bad <= 0 :
             print("All units valid :)")
 
@@ -87,13 +86,12 @@ class FormatChecker:
         default = self.config.field_dict
         bad = False
         for field in default:
-            index = 0
-            for i in file[field]:
-                if i not in default.get(field) and i != "-0":
-                    print(field + ' Row ' + str(index)
-                        + ': Unexpected Entry: ' + str(i))
+            for row in range(len(file[field])):
+                cell = file.loc[row, field]
+                if cell not in default.get(field) and cell != "-0":
+                    print(field + ' Row ' + str(row)
+                        + ': Unexpected Entry: ' + str(cell))
                     bad = True
-                index += 1
         if not bad:
             print("All fields valid")
 
