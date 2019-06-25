@@ -15,6 +15,10 @@ Examples of pathname
 
 EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
 
+**(DISCLAIMER)**
+I plan on refactoring the format check into a single script to clean up the code and configuration files.
+Execution will be different once it's fully implemented.
+
 Format Check:
 * Check File: **_python formatcheck.py "pathname"_**
 * Setup: **_python setup.py "sampleFile"_**
