@@ -1,142 +1,251 @@
 __author__ = "Edward Chang"
 
 from math import isnan
+import os
 import pandas as pd
 import pickle
-from sharedfunctions import add_item, split_unit, get_data_type, get_com_pro
 from sys import argv
 
-''' Reads Unit Config File
-Commodity and Unit seperated by an equals sign " = " '''
-def read_uconfig(type):
-    units = {}
-    with open("config/" + type + "unitdict.bin", "rb") as udef:
-        units = pickle.load(udef)
-    return units
+class FormatChecker:
+    __slots__ = ['config']
 
+    def __init__(self, type):
+        self.config = self.read_config(type)
 
-''' Reads Header Config File '''
-def read_hconfig(type):
-    columns = []
-    with open("config/" + type + "headerlist.bin", "rb") as hdef:
-        columns = pickle.load(hdef)
-    return columns
+    ''' Reads config bin '''
+    def read_config(self, type):
+        with open("config/" + type + "config.bin","rb") as config:
+            return pickle.load(config)
 
+    ''' Returns number of W's found'''
+    def get_w_count(self, file):
+        volume_w_count = 0
+        state_w_count = 0
+        if file.columns.contains("Volume"):
+            for row in file["Volume"]:
+                if row == 'W':
+                    volume_w_count += 1
+        if file.columns.contains("State"):
+            for row in file["State"]:
+                if row == "Withheld":
+                    state_w_count += 1
+        return volume_w_count, state_w_count
 
-''' Reads Unit Config File
-Commodity and Unit seperated by an equals sign " = " '''
-def read_fconfig(type):
-    fields = {}
-    with open("config/" + type + "fielddict.bin", "rb") as fdef:
-        fields = pickle.load(fdef)
-    return fields
-
-
-
-''' Returns number of W's found'''
-def get_w_count(file):
-    volume_w_count = 0
-    state_w_count = 0
-    if file.columns.contains("Volume"):
-        for row in file["Volume"]:
-            if row == 'W':
-                volume_w_count += 1
-    if file.columns.contains("State"):
-        for row in file["State"]:
-            if row == "Withheld":
-                state_w_count += 1
-    return volume_w_count, state_w_count
-
-
-''' Checks header for any inconsistences
-i.e. Order, missing or unexpected fields'''
-def check_header(file, default):
-    columns = file.columns
-    uncheckedCols = set(columns)
-    for i in range(len(default)):
-        # Checks if Field in file and in correct column
-        if columns.contains(default[i]):
-            if columns[i] == default[i]:
-                print(default[i] + ": True")
+    ''' Checks header for any inconsistences
+    i.e. Order, missing or unexpected fields'''
+    def check_header(self, file):
+        default = self.config.header
+        columns = file.columns
+        uncheckedCols = set(columns)
+        for i in range(len(default)):
+            # Checks if Field in file and in correct column
+            if columns.contains(default[i]):
+                if columns[i] == default[i]:
+                    print(default[i] + ": True")
+                else:
+                    print(default[i] + ": Unexpected order")
+                uncheckedCols.remove(default[i])
             else:
-                print(default[i] + ": Unexpected order")
-            uncheckedCols.remove(default[i])
-        else:
-            # Field not present in the file
-            print(default[i] + ": Not Present")
-    # Prints all fields not in the format
-    if len(uncheckedCols) > 0:
-        print("\nNew Cols:", uncheckedCols)
+                # Field not present in the file
+                print(default[i] + ": Not Present")
+        # Prints all fields not in the format
+        if len(uncheckedCols) > 0:
+            print("\nNew Cols:", uncheckedCols)
 
+    ''' Checks commodities/products for inconsistences
+    i.e. New items, Unexpected units of measurement '''
+    def check_unit_dict(self, file):
 
-''' Checks commodities/products for inconsistences
-i.e. New items, Unexpected units of measurement '''
-def check_unit_dict(file, default):
-    index = 0
-    bad = False
-    col = get_com_pro(file.columns)
-    if col == "n/a":
-        return "No Units Available"
-    for u in file[col]:
-        bad = _check_unit(u, default, index)
-        index+=1
-    if not bad:
-        print("All units valid :)")
+        def _check_unit(string, default, index):
+            # Splits line by Item and Unit
+            line = split_unit(string)
+            # Checks if Item is valid and has correct units
+            if default.__contains__(line[0]):
+                if line[1] not in default.get(line[0]):
+                    print('Row ' + str(index) + ': Expected Unit - (' + line[1]
+                        + ') [For Item: ' + line[0] + ']')
+                    return 1
+            elif line[0] != "-0":
+                print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
+                return 1
+            return 0
 
-
-''' Helper method for check_unit_dict '''
-def _check_unit(string, default, index):
-    # Splits line by Item and Unit
-    line = split_unit(string)
-    # Checks if Item is valid and has correct units
-    if default.__contains__(line[0]):
-        if line[1] not in default.get(line[0]):
-            print('Row ' + str(index) + ': Expected Unit - (' + line[1]  + ') [For Item: ' + line[0] + ']')
-            return True
-    else:
-        print('Row ' + str(index) + ': Unknown Item: ' + line[0])
-        return True
-
-
-''' For checking non-numerical columns '''
-def check_misc_cols(file, default):
-    bad = False
-    for field in default:
+        default = self.config.units
         index = 0
-        for i in file[field]:
-            if i not in default.get(field) and not isnan(i):
-                print(field + ' Row ' + str(index) + ': Unexpected Entry: ' + str(i))
-                bad = True
-            index += 1
-    if not bad:
-        print("All fields valid")
+        bad = 0
+        col = get_com_pro(file.columns)
+        if col == "n/a":
+            return "No Units Available"
+        for u in file[col]:
+            bad += _check_unit(u, default, index)
+            index+=1
+        if bad <= 0 :
+            print("All units valid :)")
+
+    ''' For checking non-numerical columns '''
+    def check_misc_cols(self, file):
+        default = self.config.field_dict
+        bad = False
+        for field in default:
+            index = 0
+            for i in file[field]:
+                if i not in default.get(field) and i != "-0":
+                    print(field + ' Row ' + str(index)
+                        + ': Unexpected Entry: ' + str(i))
+                    bad = True
+                index += 1
+        if not bad:
+            print("All fields valid")
+
+    ''' Reports if a column is missing values '''
+    def check_nan(self, file, col):
+        for i in range(len(file)):
+            if isnan(row):
+                print("Row " + str(i) + ": Missing " + col)
 
 
-''' Reports if a column is missing values '''
-def check_nan(file, col):
-    for i in range(len(file)):
-        if isnan(row):
-            print("Row " + str(i) + ": Missing " + col)
+class Setup:
+    __slots__ = ['header', 'units', 'field_dict']
+
+    def __init__(self, file):
+        self.header = self.get_header(file) # List
+        self.units = self.get_unit_dict(file) # Dictionary
+        self.field_dict = self.get_misc_cols(file) # Dictionary
+
+    """ Returns Header List based on Excel file
+    Keyword arguements:
+    file -- A Pandas DataFrame
+    """
+    def get_header(self, file):
+        return list(file.columns)
+
+    """ Returns Unit Dictionary on Excel file """
+    def get_unit_dict(self, file):
+        u = {}
+        col = get_com_pro(file.columns)
+        if col == "n/a":
+            return
+        for row in file[col]:
+            # Key and Value split
+            line = split_unit(row)
+            k,v = line[0], line[1]
+            add_item(k, v, u)
+        return u
+
+    """ Returns a dictionary of fields not listed in col_wlist """
+    def get_misc_cols(self, file):
+        col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' }
+        col_wlist.add(get_com_pro(file.columns))
+        fields = {}
+        for col in file.columns:
+            if col not in col_wlist:
+                fields[col] = { i for i in file[col] }
+        return fields
+
+    """ Writes a text file as on item and expected units of measurement """
+    def write_config(self, type):
+        if not os.path.exists('config'):
+            print('No Config Folder found. Creating folder...')
+            os.mkdir('config')
+        with open("config/" + type + "config.bin", "wb") as config:
+            pickle.dump(self, config)
+        print("Setup Complete")
+
+
+
+""" For naming config files """
+def get_data_type(name):
+    lower = name.lower()
+
+    def _get_when():
+        if "cy" in lower:
+            return "cy"
+        elif "fy" in lower:
+            return "fy"
+        elif "mo" in lower:
+            return "m"
+        return ""
+
+    def _get_who():
+        if "com" in lower:
+            return "com"
+        elif "fed" in lower:
+            return "fed"
+        elif "nat" in lower:
+            return "na"
+        return ""
+
+    def _get_what():
+        if "prod" in lower:
+            return "p"
+        elif "rev" in lower:
+            return "r"
+        elif "disb" in lower:
+            return "d"
+        return ""
+
+    return _get_when() + _get_who() + _get_what() + "_"
+
+""" Returns a list of the split string based on item and unit """
+def split_unit(string):
+    string = str(string)
+    # For general purpose commodities
+    if "(" in string:
+        split = string.rsplit(" (",1)
+        split[1] = split[1].rstrip(")")
+        return split
+    # The comma is for Geothermal
+    elif "," in string:
+        return string.split(", ",1)
+    # In case no unit is found
+    return [string,'']
+
+""" Adds key to dictionary if not present. Else adds value to key set.
+Keyword arguements:
+key -- Key entry for the dict, e.g. A commodity
+value -- Value entry corresponding to key, e.g. Unit or Value
+dictionary -- Reference to dictionary
+"""
+def add_item(key, value, dictionary):
+    # Adds Value to Set if Key exists
+    if key in dictionary:
+        dictionary[key].add(value)
+    # Else adds new key with value
+    else:
+        dictionary[key] = {value}
+
+''' Checks if "Commodity", "Product", both, or neither are present '''
+def get_com_pro(col):
+    if not col.contains("Product") and not col.contains("Commodity"):
+        return "n/a"
+    if col.contains("Product"):
+        if col.contains("Commodity"):
+            return"n/a"
+        else:
+            return "Product"
+    return "Commodity"
+
 
 
 ''' Where all the stuff is ran '''
 def main():
-    type = get_data_type(argv[1])
-    file = pd.read_excel(argv[1])
+    if argv[1] == "setup":
+        type = get_data_type(argv[2])
+        file = pd.read_excel(argv[2])
+        config = Setup(file)
+        config.write_config(type)
+    else:
+        type = get_data_type(argv[1])
+        file = pd.read_excel(argv[1]).fillna("-0")
+        print(file)
 
-    default_header = read_hconfig(type)
-    default_units = read_uconfig(type)
-    default_fields = read_fconfig(type)
-
-    print()
-    check_header(file, default_header)
-    print()
-    check_unit_dict(file, default_units)
-    check_misc_cols(file, default_fields)
-    w = get_w_count(file)
-    print("\n(Volume) W's Found: " + str(w[0]) )
-    print("(Location) W's Found: " + str(w[1]) )
-
+        check = FormatChecker(type)
+        check.check_header(file)
+        check.check_unit_dict(file)
+        check.check_misc_cols(file)
+        w = check.get_w_count(file)
+        print("\n(Volume) W's Found: " + str(w[0]) )
+        print("(Location) W's Found: " + str(w[1]) )
 
 if __name__ == '__main__':
     main()
