@@ -9,16 +9,16 @@ from sys import argv
 
 class FormatChecker:
     __slots__ = ['config']
-
+    ''' Constructor for FormatChecker. Uses config based on data type'''
     def __init__(self, type):
         self.config = self.read_config(type)
 
-    ''' Reads config bin '''
+    ''' Reads config bin based on data type'''
     def read_config(self, type):
         with open("config/" + type + "config.bin","rb") as config:
             return pickle.load(config)
 
-    ''' Returns number of W's found'''
+    ''' Returns number of W's found for Volume and Location'''
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
@@ -33,7 +33,7 @@ class FormatChecker:
         return volume_w_count, state_w_count
 
     ''' Checks header for any inconsistences
-    i.e. Order, missing or unexpected fields'''
+    i.e. Order, missing or unexpected field names'''
     def check_header(self, file):
         default = self.config.header
         columns = file.columns
@@ -96,7 +96,7 @@ class FormatChecker:
         if not bad:
             print("All fields valid")
 
-    ''' Reports if a column is missing values '''
+    ''' Reports if specific columns are missing values '''
     def check_nan(self, file):
         cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
             "Mineral Lease Type", "Month", "Onshore/Offshore",
@@ -146,7 +146,7 @@ class Setup:
                 fields[col] = { i for i in file[col] }
         return fields
 
-    """ Writes a text file as on item and expected units of measurement """
+    """ Writes a bin file containing all variables from Setup """
     def write_config(self, type):
         if not os.path.exists('config'):
             print('No Config Folder found. Creating folder...')
