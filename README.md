@@ -24,8 +24,8 @@ Format Check:
  * Will have to redo most of the setup
 
 ## Progress so far
-Unit Dictionary: Ready
-Field Name Check: Ready
-Non-numerical Field Check: Ready
-N/A Check: wip
-Numerical Field Check: wip
+- [x] Unit Dictionary
+- [x] Field Name Check
+- [x] Non-numerical Field Check
+- [ ] N/A Check: wip
+- [ ] Numerical Field Check: wip
