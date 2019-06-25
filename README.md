@@ -27,5 +27,5 @@ Format Check:
 - [x] Unit Dictionary
 - [x] Field Name Check
 - [x] Non-numerical Field Check
-- [ ] N/A Check: wip
+- [ ] N/A Check: Almost?
 - [ ] Numerical Field Check: wip
