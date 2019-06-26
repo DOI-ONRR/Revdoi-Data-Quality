@@ -22,14 +22,17 @@ class FormatChecker:
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
+        # If Volume is present in file
         if file.columns.contains("Volume"):
             for row in file["Volume"]:
                 if row == 'W':
                     volume_w_count += 1
+        # If State is present in file
         if file.columns.contains("State"):
             for row in file["State"]:
                 if row == "Withheld":
                     state_w_count += 1
+        # Returns Tuple of W count
         return volume_w_count, state_w_count
 
     ''' Checks header for Order and missing or unexpected field names '''
@@ -85,12 +88,13 @@ class FormatChecker:
         default = self.config.field_dict
         bad = False
         for field in default:
-            for row in range(len(file[field])):
-                cell = file.loc[row, field]
-                if cell not in default.get(field) and cell != "-0":
-                    print(field + ' Row ' + str(row)
-                        + ': Unexpected Entry: ' + str(cell))
-                    bad = True
+            if file.columns.contains(field):
+                for row in range(len(file[field])):
+                    cell = file.loc[row, field]
+                    if cell not in default.get(field) and cell != "-0":
+                        print(field + ' Row ' + str(row)
+                            + ': Unexpected Entry: ' + str(cell))
+                        bad = True
         if not bad:
             print("All fields valid")
 
