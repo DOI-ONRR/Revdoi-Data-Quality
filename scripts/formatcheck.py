@@ -1,5 +1,6 @@
 __author__ = "Edward Chang"
 
+# Imports
 from math import isnan
 import os
 import pandas as pd
@@ -8,34 +9,37 @@ from sys import argv
 
 class FormatChecker:
     __slots__ = ['config']
-
+    ''' Constructor for FormatChecker. Uses config based on data type'''
     def __init__(self, type):
         self.config = self.read_config(type)
 
-    ''' Reads config bin '''
+    ''' Returns an unpickled Setup object '''
     def read_config(self, type):
         with open("config/" + type + "config.bin","rb") as config:
             return pickle.load(config)
 
-    ''' Returns number of W's found'''
+    ''' Returns number of W's found for Volume and Location'''
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
+        # If Volume is present in file
         if file.columns.contains("Volume"):
             for row in file["Volume"]:
                 if row == 'W':
                     volume_w_count += 1
+        # If State is present in file
         if file.columns.contains("State"):
             for row in file["State"]:
                 if row == "Withheld":
                     state_w_count += 1
+        # Returns Tuple of W count
         return volume_w_count, state_w_count
 
-    ''' Checks header for any inconsistences
-    i.e. Order, missing or unexpected fields'''
+    ''' Checks header for Order and missing or unexpected field names '''
     def check_header(self, file):
         default = self.config.header
         columns = file.columns
+        # Set of Unchecked columns.
         uncheckedCols = set(columns)
         for i in range(len(default)):
             # Checks if Field in file and in correct column
@@ -52,8 +56,7 @@ class FormatChecker:
         if len(uncheckedCols) > 0:
             print("\nNew Cols:", uncheckedCols)
 
-    ''' Checks commodities/products for inconsistences
-    i.e. New items, Unexpected units of measurement '''
+    ''' Checks commodities/products for New items or Unexpected units of measurement '''
     def check_unit_dict(self, file):
 
         def _check_unit(string, default, index):
@@ -81,21 +84,22 @@ class FormatChecker:
         if bad <= 0 :
             print("All units valid :)")
 
-    ''' For checking non-numerical columns '''
+    ''' Checks non-numerical columns for Unexpected Values '''
     def check_misc_cols(self, file):
         default = self.config.field_dict
         bad = False
         for field in default:
-            for row in range(len(file[field])):
-                cell = file.loc[row, field]
-                if cell not in default.get(field) and cell != "-0":
-                    print(field + ' Row ' + str(row)
-                        + ': Unexpected Entry: ' + str(cell))
-                    bad = True
+            if file.columns.contains(field):
+                for row in range(len(file[field])):
+                    cell = file.loc[row, field]
+                    if cell not in default.get(field) and cell != "-0":
+                        print(field + ' Row ' + str(row)
+                            + ': Unexpected Entry: ' + str(cell))
+                        bad = True
         if not bad:
             print("All fields valid")
 
-    ''' Reports if a column is missing values '''
+    ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
         cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
             "Mineral Lease Type", "Month", "Onshore/Offshore",
@@ -110,7 +114,13 @@ class FormatChecker:
 class Setup:
     __slots__ = ['header', 'units', 'field_dict']
 
-    def __init__(self, file):
+    ''' Constructor for Setup '''
+    def __init__(self, file=None):
+        if file is not None:
+            set_file(file)
+
+    ''' Sets variables based on file given '''
+    def set_file(self, file):
         self.header = self.get_header(file) # List
         self.units = self.get_unit_dict(file) # Dictionary
         self.field_dict = self.get_misc_cols(file) # Dictionary
@@ -145,7 +155,7 @@ class Setup:
                 fields[col] = { i for i in file[col] }
         return fields
 
-    """ Writes a text file as on item and expected units of measurement """
+    """ Writes a bin file containing all variables from Setup """
     def write_config(self, type):
         if not os.path.exists('config'):
             print('No Config Folder found. Creating folder...')
@@ -159,35 +169,12 @@ class Setup:
 """ For naming config files """
 def get_data_type(name):
     lower = name.lower()
-
-    def _get_when():
-        if "cy" in lower:
-            return "cy"
-        elif "fy" in lower:
-            return "fy"
-        elif "mo" in lower:
-            return "m"
-        return ""
-
-    def _get_who():
-        if "com" in lower:
-            return "com"
-        elif "fed" in lower:
-            return "fed"
-        elif "nat" in lower:
-            return "na"
-        return ""
-
-    def _get_what():
-        if "prod" in lower:
-            return "p"
-        elif "rev" in lower:
-            return "r"
-        elif "disb" in lower:
-            return "d"
-        return ""
-
-    return _get_when() + _get_who() + _get_what() + "_"
+    prefixes = ["cy","fy","monthly","company","federal","native","production","revenue","disbribution"]
+    final_prefix = ""
+    for p in prefixes:
+        if p in lower:
+            final_prefix += p
+    return final_prefix + "_"
 
 """ Returns a list of the split string based on item and unit """
 def split_unit(string):
@@ -218,11 +205,11 @@ def add_item(key, value, dictionary):
         dictionary[key] = {value}
 
 ''' Checks if "Commodity", "Product", both, or neither are present '''
-def get_com_pro(col):
-    if not col.contains("Product") and not col.contains("Commodity"):
+def get_com_pro(cols):
+    if not cols.contains("Product") and not cols.contains("Commodity"):
         return "n/a"
-    if col.contains("Product"):
-        if col.contains("Commodity"):
+    if cols.contains("Product"):
+        if cols.contains("Commodity"):
             return"n/a"
         else:
             return "Product"
@@ -244,12 +231,14 @@ def main():
 
         check = FormatChecker(type)
         check.check_header(file)
+        print()
         check.check_unit_dict(file)
         check.check_misc_cols(file)
         check.check_nan(file)
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]) )
         print("(Location) W's Found: " + str(w[1]) )
+        print("Done")
 
 if __name__ == '__main__':
     main()
