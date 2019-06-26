@@ -76,7 +76,8 @@ def excel_diff(path_OLD, path_NEW):
 
     # set format over range
     ## highlight changed cells
-    worksheet.conditional_format('A1:ZZ1000', {'type': 'text',
+    end = 'ZZ' + str(len(dfDiff))
+    worksheet.conditional_format('A1:'+ end, {'type': 'text',
                                             'criteria': 'containing',
                                             'value':'→',
                                             'format': highlight_fmt})
