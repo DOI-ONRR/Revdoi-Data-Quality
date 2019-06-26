@@ -203,7 +203,7 @@ def add_item(key, value, dictionary):
 def get_com_pro(cols):
     if not cols.contains("Product") and not cols.contains("Commodity"):
         return "n/a"
-    if col.contains("Product"):
+    if cols.contains("Product"):
         if cols.contains("Commodity"):
             return"n/a"
         else:
