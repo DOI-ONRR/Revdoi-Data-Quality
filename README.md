@@ -3,31 +3,29 @@ I'll put notes here. Feel free to give feedback
 
 [More Details](https://github.com/ONRR/Revdoi-Data-Quality/wiki)
 
-[For Reference](https://docs.google.com/document/d/1fem53kzp4PkXbNiEpmJCJsC1mjv_ELOK9bDdLi_UksA/edit?ts=5cffd8a1)
-
 Stuff I ~stole~ borrowed:
 * Excel diff: https://matthewkudija.com/blog/2018/07/21/excel-diff/
 
 ## How to Use
-Suggestion: Run py scripts through Anaconda PowerShell
+Be sure to change directory to where the py script is located using **_cd pathname_**
 
-Be sure to change directory to where the py script is located using **_cd "pathname_"**
+Example Run(s):
+```
+cd Documents/GitHub/Data-Quality-Checker/scripts
+python diff.py ../files/monthly_production_05-2019 ../files/monthly_production_06-2019
+python formatcheck.py ../files/monthly_revenue_05-2019
+```
 
-Examples of pathname
-* Full pathname: "C:/Users/name/.../foldername"
-* Local pathname: "foldername"
-* For going back a folder: ".."
-
-EXCEL DIFF: **_python diff.py "oldFile" "newFile"_**
+EXCEL DIFF: **_python diff.py oldFile.xlsx newFile.xlsx_**
 
 Format Check:
-* Check File: **_python formatcheck.py "pathname"_**
-* Setup: **_python formatcheck.py setup "sampleFile"_**
- * Will have to redo most of the setup
+* Check File: **_python formatcheck.py file.xlsx_**
+* (Only need to run once for format) Setup: **_python formatcheck.py setup sampleFile.xlsx_**
+
 
 ## Progress so far
 - [x] Unit Dictionary
 - [x] Field Name Check
 - [x] Non-numerical Field Check
-- [ ] N/A Check: Almost?
+- [ ] N/A Check: Mostly Done (Bugs everywhere)
 - [ ] Numerical Field Check: wip
