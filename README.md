@@ -1,6 +1,7 @@
 # Data-Quality-Checker
 I'll put notes here. Feel free to give feedback
-[More Detailsl](https://github.com/ONRR/Revdoi-Data-Quality/wiki/)
+
+[More Details](https://github.com/ONRR/Revdoi-Data-Quality/wiki)
 
 Stuff I ~stole~ borrowed:
 * Excel diff: https://matthewkudija.com/blog/2018/07/21/excel-diff/
