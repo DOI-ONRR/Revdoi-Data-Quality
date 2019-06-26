@@ -13,7 +13,7 @@ class FormatChecker:
     def __init__(self, type):
         self.config = self.read_config(type)
 
-    ''' Reads config bin based on data type'''
+    ''' Returns an unpickled Setup object '''
     def read_config(self, type):
         with open("config/" + type + "config.bin","rb") as config:
             return pickle.load(config)
@@ -32,8 +32,7 @@ class FormatChecker:
                     state_w_count += 1
         return volume_w_count, state_w_count
 
-    ''' Checks header for any inconsistences
-    i.e. Order, missing or unexpected field names'''
+    ''' Checks header for Order and missing or unexpected field names '''
     def check_header(self, file):
         default = self.config.header
         columns = file.columns
@@ -53,8 +52,7 @@ class FormatChecker:
         if len(uncheckedCols) > 0:
             print("\nNew Cols:", uncheckedCols)
 
-    ''' Checks commodities/products for inconsistences
-    i.e. New items, Unexpected units of measurement '''
+    ''' Checks commodities/products for New items or Unexpected units of measurement '''
     def check_unit_dict(self, file):
 
         def _check_unit(string, default, index):
@@ -82,7 +80,7 @@ class FormatChecker:
         if bad <= 0 :
             print("All units valid :)")
 
-    ''' For checking non-numerical columns '''
+    ''' Checks non-numerical columns for Unexpected Values '''
     def check_misc_cols(self, file):
         default = self.config.field_dict
         bad = False
@@ -96,7 +94,7 @@ class FormatChecker:
         if not bad:
             print("All fields valid")
 
-    ''' Reports if specific columns are missing values '''
+    ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
         cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
             "Mineral Lease Type", "Month", "Onshore/Offshore",
@@ -111,7 +109,13 @@ class FormatChecker:
 class Setup:
     __slots__ = ['header', 'units', 'field_dict']
 
-    def __init__(self, file):
+    ''' Constructor for Setup '''
+    def __init__(self, file=None):
+        if file is not None:
+            set_file(file)
+
+    ''' Sets variables based on file given '''
+    def set_file(self, file):
         self.header = self.get_header(file) # List
         self.units = self.get_unit_dict(file) # Dictionary
         self.field_dict = self.get_misc_cols(file) # Dictionary
