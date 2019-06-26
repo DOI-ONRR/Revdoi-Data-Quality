@@ -241,17 +241,18 @@ def main():
         highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bold':True})
         new_fmt = workbook.add_format({'font_color': '#32CD32', 'bold':True})
 
-        worksheet.conditional_format('A1:ZZ1000', {'type': 'text',
+        end = 'ZZ' + str(len(dfDiff))
+        worksheet.conditional_format('A1:'+ end, {'type': 'text',
                                             'criteria': 'containing',
                                             'value':'[New Unit]',
                                             'format': highlight_fmt}, )
 
-        worksheet.conditional_format('A1:ZZ1000', {'type': 'text',
+        worksheet.conditional_format('A1:'+ end, {'type': 'text',
                                             'criteria': 'containing',
                                             'value':'[N/A]',
                                             'format': highlight_fmt}, )
 
-        worksheet.conditional_format('A1:ZZ1000', {'type': 'text',
+        worksheet.conditional_format('A1:'+ end, {'type': 'text',
                                             'criteria': 'containing',
                                             'value':'[New Item]',
                                             'format': new_fmt}, )
