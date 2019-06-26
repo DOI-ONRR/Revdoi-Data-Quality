@@ -1,7 +1,6 @@
-# Experimental Data-Quality-Checker
-## Warning! This build is volatile and subject to change at any moment
-
-[More Details on Experimental](https://github.com/ONRR/Revdoi-Data-Quality/wiki/Experimental-Stuff)
+# Data-Quality-Checker
+I'll put notes here. Feel free to give feedback
+[More Detailsl](https://github.com/ONRR/Revdoi-Data-Quality/wiki/)
 
 Stuff I ~stole~ borrowed:
 * Excel diff: https://matthewkudija.com/blog/2018/07/21/excel-diff/

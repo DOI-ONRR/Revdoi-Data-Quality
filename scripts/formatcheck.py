@@ -39,6 +39,7 @@ class FormatChecker:
     def check_header(self, file):
         default = self.config.header
         columns = file.columns
+        # Set of Unchecked columns.
         uncheckedCols = set(columns)
         for i in range(len(default)):
             # Checks if Field in file and in correct column
@@ -204,7 +205,7 @@ def add_item(key, value, dictionary):
         dictionary[key] = {value}
 
 ''' Checks if "Commodity", "Product", both, or neither are present '''
-def get_com_pro(col):
+def get_com_pro(cols):
     if not col.contains("Product") and not col.contains("Commodity"):
         return "n/a"
     if col.contains("Product"):
