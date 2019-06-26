@@ -1,6 +1,7 @@
 __author__ = "Edward Chang"
 
 # Imports
+from datetime import datetime
 from math import isnan
 import os
 import pandas as pd
@@ -147,9 +148,14 @@ class Setup:
 
     """ Returns a dictionary of fields not listed in col_wlist """
     def get_misc_cols(self, file):
-        col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' }
+        col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
-        fields = {}
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+        fields = {
+            # Goes until 1999
+            "Calendar Year" : { i for i in range(year, 1999, -1) }
+        }
         for col in file.columns:
             if col not in col_wlist:
                 fields[col] = { i for i in file[col] }
