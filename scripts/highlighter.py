@@ -200,11 +200,11 @@ def add_item(key, value, dictionary):
         dictionary[key] = {value}
 
 ''' Checks if "Commodity", "Product", both, or neither are present '''
-def get_com_pro(col):
-    if not col.contains("Product") and not col.contains("Commodity"):
+def get_com_pro(cols):
+    if not cols.contains("Product") and not cols.contains("Commodity"):
         return "n/a"
     if col.contains("Product"):
-        if col.contains("Commodity"):
+        if cols.contains("Commodity"):
             return"n/a"
         else:
             return "Product"
