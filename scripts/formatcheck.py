@@ -92,6 +92,8 @@ class FormatChecker:
     def check_misc_cols(self, file):
         default = self.config.field_dict
         bad = False
+        if file.columns.contains('Calendar Year'):
+            self.check_year(file['Calendar Year'])
         for field in default:
             if file.columns.contains(field):
                 for row in range(len(file[field])):
@@ -102,6 +104,15 @@ class FormatChecker:
                         bad = True
         if not bad:
             print("All fields valid")
+
+    ''' Checks if year column is valid '''
+    def check_year(self,cy):
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+        years = { i for i in range(current_year, 1969, -1) }
+        for y in range(len(cy)):
+            if cy[y] not in years:
+                print("Row " + str(y) + ": Invalid year " + str(cy[y]))
 
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
@@ -153,12 +164,7 @@ class Setup:
     def get_misc_cols(self, file):
         col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
-        current_year = datetime.now().year
-        current_month = datetime.now().month
-        fields = {
-            # Goes until 1999
-            "Calendar Year" : { i for i in range(year, 1999, -1) }
-        }
+        fields = {}
         for col in file.columns:
             if col not in col_wlist:
                 fields[col] = { i for i in file[col] }
