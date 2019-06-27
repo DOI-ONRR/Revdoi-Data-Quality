@@ -117,7 +117,7 @@ class Setup:
     ''' Constructor for Setup '''
     def __init__(self, file=None):
         if file is not None:
-            set_file(file)
+            self.set_file(file)
 
     ''' Sets variables based on file given '''
     def set_file(self, file):
