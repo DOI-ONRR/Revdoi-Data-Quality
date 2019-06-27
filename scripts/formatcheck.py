@@ -99,7 +99,7 @@ class FormatChecker:
                 for row in range(len(file[field])):
                     cell = file.loc[row, field]
                     if cell not in default.get(field) and cell != "-0":
-                        print(field + ' Row ' + str(row)
+                        print(field + ' Row ' + str(row + 2)
                             + ': Unexpected Entry: ' + str(cell))
                         bad = True
         if not bad:
@@ -112,7 +112,7 @@ class FormatChecker:
         years = { i for i in range(current_year, 1969, -1) }
         for y in range(len(cy)):
             if cy[y] not in years:
-                print("Row " + str(y) + ": Invalid year " + str(cy[y]))
+                print("Row " + str(y + 2) + ": Invalid year " + str(cy[y]))
 
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
@@ -123,7 +123,7 @@ class FormatChecker:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
                     if file.loc[row, col] == "-0":
-                        print("Row " + str(row) + ": Missing " + col)
+                        print("Row " + str(row + 2) + ": Missing " + col)
 
 
 class Setup:
