@@ -56,6 +56,9 @@ class FormatChecker:
         # Prints all fields not in the format
         if len(uncheckedCols) > 0:
             print("\nNew Cols:", uncheckedCols)
+            for col in uncheckedCols:
+                if col.endswith(" ") or col.startswith(" "):
+                    print("Whitespace found for: " + col)
 
     ''' Checks commodities/products for New items or Unexpected units of measurement '''
     def check_unit_dict(self, file):
