@@ -125,6 +125,11 @@ class FormatChecker:
                     if file.loc[row, col] == "-0":
                         print("Row " + str(row + 2) + ": Missing " + col)
 
+    ''' Stuff here '''
+    def check_threshold(self, file, min=0, max=0):
+        for i in range(0):
+            print("A")
+
 
 class Setup:
     __slots__ = ['header', 'units', 'field_dict']
@@ -233,7 +238,6 @@ def get_com_pro(cols):
     return "Commodity"
 
 
-
 ''' Where all the stuff is ran '''
 def main():
     if argv[1] == "setup":
@@ -253,9 +257,10 @@ def main():
         check.check_misc_cols(file)
         check.check_nan(file)
         w = check.get_w_count(file)
-        print("\n(Volume) W's Found: " + str(w[0]) )
-        print("(Location) W's Found: " + str(w[1]) )
+        print("\n(Volume) W's Found: " + str(w[0]))
+        print("(Location) W's Found: " + str(w[1]))
         print("Done")
+
 
 if __name__ == '__main__':
     main()
