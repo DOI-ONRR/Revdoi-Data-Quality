@@ -10,16 +10,16 @@ from sys import argv
 
 class FormatChecker:
     __slots__ = ['config']
-    ''' Constructor for FormatChecker. Uses config based on data type'''
+    ''' Constructor for FormatChecker. Uses config based on data type '''
     def __init__(self, type):
         self.config = self.read_config(type)
 
     ''' Returns an unpickled Setup object '''
     def read_config(self, type):
-        with open("config/" + type + "config.bin","rb") as config:
+        with open("config/" + type + "config.bin", "rb") as config:
             return pickle.load(config)
 
-    ''' Returns number of W's found for Volume and Location'''
+    ''' Returns number of W's found for Volume and Location '''
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
@@ -70,7 +70,7 @@ class FormatChecker:
             if default.__contains__(line[0]):
                 if line[1] not in default.get(line[0]):
                     print('Row ' + str(index) + ': Expected Unit - (' + line[1]
-                        + ') [For Item: ' + line[0] + ']')
+                          + ') [For Item: ' + line[0] + ']')
                     return 1
             elif line[0] != "-0":
                 print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
@@ -85,7 +85,7 @@ class FormatChecker:
         for row in range(len(file[col])):
             cell = file.loc[row, col]
             bad += _check_unit(cell, default, row)
-        if bad <= 0 :
+        if bad <= 0:
             print("All units valid :)")
 
     ''' Checks non-numerical columns for Unexpected Values '''
@@ -116,9 +116,9 @@ class FormatChecker:
 
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
-        cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
-            "Mineral Lease Type", "Month", "Onshore/Offshore",
-            "Revenue", "Volume" ]
+        cols = ["Calendar Year", "Corperate Name", "Ficsal Year",
+                "Mineral Lease Type", "Month", "Onshore/Offshore",
+                "Revenue", "Volume"]
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
@@ -162,7 +162,8 @@ class Setup:
 
     """ Returns a dictionary of fields not listed in col_wlist """
     def get_misc_cols(self, file):
-        col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' , 'Calendar Year'}
+        col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
+                     'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
         fields = {}
         for col in file.columns:
@@ -184,7 +185,8 @@ class Setup:
 """ For naming config files """
 def get_data_type(name):
     lower = name.lower()
-    prefixes = ["cy","fy","monthly","company","federal","native","production","revenue","disbribution"]
+    prefixes = ["cy", "fy", "monthly", "company", "federal", "native",
+                "production", "revenue", "disbribution"]
     final_prefix = ""
     for p in prefixes:
         if p in lower:
