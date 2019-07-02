@@ -287,8 +287,6 @@ def main():
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
-        print(config.units)
-        print(config.field_dict)
     elif argv[1] == "num":
         num = NumberChecker(file)
         num.check_sd(file, 4)
