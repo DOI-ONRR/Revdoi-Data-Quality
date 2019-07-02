@@ -213,6 +213,7 @@ class Setup:
         col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
                      'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
+        fields = {}
         for col in file.columns:
             if col not in col_wlist:
                 fields[col] = { i for i in file[col] }
