@@ -131,7 +131,7 @@ class NumberChecker:
     __slots__ = ['col']
 
     def __init__(self, file):
-        self.col = self.get_vol_rev(file.columns)
+        self.col = self._get_vol_rev(file.columns)
 
     ''' Reports values with difference > 3 SD '''
     def check_sd(self, file, sd):
@@ -140,13 +140,17 @@ class NumberChecker:
             ind = df.index
             maxSigma = df[self.col].mean() + (df[self.col].std() * sd)
             minSigma = df[self.col].mean() - (df[self.col].std() * sd)
-            print("------------------------\n", commodity,
-                    minSigma, "|", maxSigma, "\n------------------------")
+            deviations = []
 
             for i in ind:
                 value = file.loc[i, self.col]
                 if value >= maxSigma or value <= minSigma:
-                    print(i, value, sep=": ")
+                    deviations.append(str(i) + ": " + str(value))
+            if deviations:
+                print("------------------------\n", commodity,
+                        minSigma, "|", maxSigma, "\n------------------------")
+                for j in deviations:
+                    print(j)
 
     ''' Set threshold '''
     def check_threshold(self, file, min=0, max=0):
@@ -156,7 +160,7 @@ class NumberChecker:
                 print(i,foo,"A")
 
     ''' Checks if "Reveneue" or "Volume" is present '''
-    def get_vol_rev(self, cols):
+    def _get_vol_rev(self, cols):
         if cols.contains("Revenue"):
             return "Revenue"
         return "Volume"
