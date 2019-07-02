@@ -134,13 +134,14 @@ class NumberChecker:
         self.col = self.get_vol_rev(file.columns)
 
     ''' Reports values with difference > 3 SD '''
-    def check_sd(self, file):
+    def check_sd(self, file, sd):
         groups = file.groupby([get_com_pro(file.columns)])
         for commodity, df in groups:
-            print("-------\n" + commodity + "\n-------")
             ind = df.index
-            maxSigma = df[self.col].mean() + (df[self.col].std() * 3)
-            minSigma = df[self.col].mean() - (df[self.col].std() * 3)
+            maxSigma = df[self.col].mean() + (df[self.col].std() * sd)
+            minSigma = df[self.col].mean() - (df[self.col].std() * sd)
+            print("------------------------\n", commodity,
+                    minSigma, "|", maxSigma, "\n------------------------")
 
             for i in ind:
                 value = file.loc[i, self.col]
@@ -149,13 +150,13 @@ class NumberChecker:
 
     ''' Set threshold '''
     def check_threshold(self, file, min=0, max=0):
-        for i in range(len(file[self.col]):
+        for i in range(len(file[self.col])):
             foo = file.loc[i, self.col]
-            if foo < min or foo > max:
+            if foo > max:
                 print(i,foo,"A")
 
     ''' Checks if "Reveneue" or "Volume" is present '''
-    def get_vol_rev(cols):
+    def get_vol_rev(self, cols):
         if cols.contains("Revenue"):
             return "Revenue"
         return "Volume"
@@ -290,8 +291,8 @@ def main():
         print("(Location) W's Found: " + str(w[1]))
 
         num = NumberChecker(file)
-        num.check_sd(file)
-        num.check_threshold(file, min=100000)
+        num.check_sd(file, 4)
+        # num.check_threshold(file, min=100000)
         print("Done")
 
 
