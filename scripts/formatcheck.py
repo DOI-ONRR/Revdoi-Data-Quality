@@ -10,16 +10,16 @@ from sys import argv
 
 class FormatChecker:
     __slots__ = ['config']
-    ''' Constructor for FormatChecker. Uses config based on data type'''
+    ''' Constructor for FormatChecker. Uses config based on data type '''
     def __init__(self, type):
         self.config = self.read_config(type)
 
     ''' Returns an unpickled Setup object '''
     def read_config(self, type):
-        with open("config/" + type + "config.bin","rb") as config:
+        with open("config/" + type + "config.bin", "rb") as config:
             return pickle.load(config)
 
-    ''' Returns number of W's found for Volume and Location'''
+    ''' Returns number of W's found for Volume and Location '''
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
@@ -70,7 +70,7 @@ class FormatChecker:
             if default.__contains__(line[0]):
                 if line[1] not in default.get(line[0]):
                     print('Row ' + str(index) + ': Expected Unit - (' + line[1]
-                        + ') [For Item: ' + line[0] + ']')
+                          + ') [For Item: ' + line[0] + ']')
                     return 1
             elif line[0] != "-0":
                 print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
@@ -85,7 +85,7 @@ class FormatChecker:
         for row in range(len(file[col])):
             cell = file.loc[row, col]
             bad += _check_unit(cell, default, row)
-        if bad <= 0 :
+        if bad <= 0:
             print("All units valid :)")
 
     ''' Checks non-numerical columns for Unexpected Values '''
@@ -116,14 +116,54 @@ class FormatChecker:
 
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
-        cols = [ "Calendar Year", "Corperate Name", "Ficsal Year",
-            "Mineral Lease Type", "Month", "Onshore/Offshore",
-            "Revenue", "Volume" ]
+        cols = ["Calendar Year", "Corperate Name", "Ficsal Year",
+                "Mineral Lease Type", "Month", "Onshore/Offshore",
+                "Revenue", "Volume"]
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
                     if file.loc[row, col] == "-0":
                         print("Row " + str(row + 2) + ": Missing " + col)
+
+
+
+class NumberChecker:
+    __slots__ = ['col']
+
+    def __init__(self, file):
+        self.col = self._get_vol_rev(file.columns)
+
+    ''' Reports values with difference > 3 SD '''
+    def check_sd(self, file, sd):
+        groups = file.groupby([get_com_pro(file.columns)])
+        for commodity, df in groups:
+            ind = df.index
+            maxSigma = df[self.col].mean() + (df[self.col].std() * sd)
+            minSigma = df[self.col].mean() - (df[self.col].std() * sd)
+            deviations = []
+
+            for i in ind:
+                value = file.loc[i, self.col]
+                if value >= maxSigma or value <= minSigma:
+                    deviations.append(str(i) + ": " + str(value))
+            if deviations:
+                print("------------------------\n", commodity,
+                        minSigma, "|", maxSigma, "\n------------------------")
+                for j in deviations:
+                    print(j)
+
+    ''' Set threshold '''
+    def check_threshold(self, file, min=0, max=0):
+        for i in range(len(file[self.col])):
+            foo = file.loc[i, self.col]
+            if foo > max:
+                print(i,foo,"A")
+
+    ''' Checks if "Reveneue" or "Volume" is present '''
+    def _get_vol_rev(self, cols):
+        if cols.contains("Revenue"):
+            return "Revenue"
+        return "Volume"
 
 
 class Setup:
@@ -162,7 +202,8 @@ class Setup:
 
     """ Returns a dictionary of fields not listed in col_wlist """
     def get_misc_cols(self, file):
-        col_wlist = { 'Revenue', 'Volume', 'Month', 'Production Volume', 'Total' , 'Calendar Year'}
+        col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
+                     'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
         current_year = datetime.now().year
         current_month = datetime.now().month
@@ -189,7 +230,8 @@ class Setup:
 """ For naming config files """
 def get_data_type(name):
     lower = name.lower()
-    prefixes = ["cy","fy","monthly","company","federal","native","production","revenue","disbribution"]
+    prefixes = ["cy", "fy", "monthly", "company", "federal", "native",
+                "production", "revenue", "disbribution"]
     final_prefix = ""
     for p in prefixes:
         if p in lower:
@@ -236,7 +278,6 @@ def get_com_pro(cols):
     return "Commodity"
 
 
-
 ''' Where all the stuff is ran '''
 def main():
     if argv[1] == "setup":
@@ -247,7 +288,6 @@ def main():
     else:
         type = get_data_type(argv[1])
         file = pd.read_excel(argv[1]).fillna("-0")
-        print(file)
 
         check = FormatChecker(type)
         check.check_header(file)
@@ -256,9 +296,14 @@ def main():
         check.check_misc_cols(file)
         check.check_nan(file)
         w = check.get_w_count(file)
-        print("\n(Volume) W's Found: " + str(w[0]) )
-        print("(Location) W's Found: " + str(w[1]) )
+        print("\n(Volume) W's Found: " + str(w[0]))
+        print("(Location) W's Found: " + str(w[1]))
+
+        num = NumberChecker(file)
+        num.check_sd(file, 4)
+        # num.check_threshold(file, min=100000)
         print("Done")
+
 
 if __name__ == '__main__':
     main()
