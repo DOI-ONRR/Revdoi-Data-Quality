@@ -135,8 +135,10 @@ class NumberChecker:
 
     ''' Reports values with difference > 3 SD '''
     def check_sd(self, file, sd):
-        groups = file.groupby([get_com_pro(file.columns)])
-        for commodity, df in groups:
+        groups = file.groupby([get_com_pro(file.columns),"Calendar Year"])
+        for item, df in groups:
+            if item[0] == "-0":
+                continue
             ind = df.index
             maxSigma = df[self.col].mean() + (df[self.col].std() * sd)
             minSigma = df[self.col].mean() - (df[self.col].std() * sd)
@@ -147,7 +149,7 @@ class NumberChecker:
                 if value >= maxSigma or value <= minSigma:
                     deviations.append(str(i) + ": " + str(value))
             if deviations:
-                print("------------------------\n", commodity,
+                print("------------------------\n", item,
                         minSigma, "|", maxSigma, "\n------------------------")
                 for j in deviations:
                     print(j)
@@ -209,7 +211,7 @@ class Setup:
         current_month = datetime.now().month
         fields = {
             # Goes until 1999
-            "Calendar Year" : { i for i in range(year, 1999, -1) }
+            "Calendar Year" : { i for i in range(current_year, 1999, -1) }
         }
         for col in file.columns:
             if col not in col_wlist:
@@ -280,15 +282,18 @@ def get_com_pro(cols):
 
 ''' Where all the stuff is ran '''
 def main():
+    type = get_data_type(argv[-1])
+    file = pd.read_excel(argv[-1]).fillna("-0")
     if argv[1] == "setup":
-        type = get_data_type(argv[2])
-        file = pd.read_excel(argv[2])
         config = Setup(file)
         config.write_config(type)
+        print(config.units)
+        print(config.field_dict)
+    elif argv[1] == "num":
+        num = NumberChecker(file)
+        num.check_sd(file, 4)
+        print("Done")
     else:
-        type = get_data_type(argv[1])
-        file = pd.read_excel(argv[1]).fillna("-0")
-
         check = FormatChecker(type)
         check.check_header(file)
         print()
@@ -298,10 +303,6 @@ def main():
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]))
         print("(Location) W's Found: " + str(w[1]))
-
-        num = NumberChecker(file)
-        num.check_sd(file, 4)
-        # num.check_threshold(file, min=100000)
         print("Done")
 
 
