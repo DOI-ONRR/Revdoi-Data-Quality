@@ -72,7 +72,7 @@ class FormatChecker:
                     print('Row ' + str(index) + ': Expected Unit - (' + line[1]
                           + ') [For Item: ' + line[0] + ']')
                     return 1
-            elif line[0] != "-0":
+            elif line[0] != --3:
                 print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
                 return 1
             return 0
@@ -98,7 +98,7 @@ class FormatChecker:
             if file.columns.contains(field):
                 for row in range(len(file[field])):
                     cell = file.loc[row, field]
-                    if cell not in default.get(field) and cell != "-0":
+                    if cell not in default.get(field) and cell != -3:
                         print(field + ' Row ' + str(row + 2)
                             + ': Unexpected Entry: ' + str(cell))
                         bad = True
@@ -122,7 +122,7 @@ class FormatChecker:
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
-                    if file.loc[row, col] == "-0":
+                    if file.loc[row, col] == -3:
                         print("Row " + str(row + 2) + ": Missing " + col)
 
 
@@ -133,20 +133,26 @@ class NumberChecker:
     def __init__(self, file):
         self.col = self._get_vol_rev(file.columns)
 
-    ''' Reports values with difference > 3 SD '''
-    def check_sd(self, file, sd):
+    ''' Reports values with difference > n SD '''
+    def check_sd(self, file, sd, year=datetime.now().year):
         groups = file.groupby([get_com_pro(file.columns),"Calendar Year"])
         for item, df in groups:
-            if item[0] == "-0":
+            if item[0] == -3 or item[1] != year:
                 continue
             ind = df.index
-            maxSigma = df[self.col].mean() + (df[self.col].std() * sd)
-            minSigma = df[self.col].mean() - (df[self.col].std() * sd)
+            mean = df[self.col].mean()
+            std = df[self.col].std() * sd
+
+            maxSigma = mean + std
+            minSigma = mean
+            if not isnan(std):
+                minSigma -= std
+
             deviations = []
 
             for i in ind:
                 value = file.loc[i, self.col]
-                if value >= maxSigma or value <= minSigma:
+                if value > maxSigma or value < minSigma:
                     deviations.append(str(i) + ": " + str(value))
             if deviations:
                 print("------------------------\n", item,
@@ -207,12 +213,6 @@ class Setup:
         col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
                      'Total' , 'Calendar Year'}
         col_wlist.add(get_com_pro(file.columns))
-        current_year = datetime.now().year
-        current_month = datetime.now().month
-        fields = {
-            # Goes until 1999
-            "Calendar Year" : { i for i in range(current_year, 1999, -1) }
-        }
         for col in file.columns:
             if col not in col_wlist:
                 fields[col] = { i for i in file[col] }
@@ -272,24 +272,21 @@ def add_item(key, value, dictionary):
 def get_com_pro(cols):
     if not cols.contains("Product") and not cols.contains("Commodity"):
         return "n/a"
-    if cols.contains("Product"):
-        if cols.contains("Commodity"):
-            return"n/a"
-        else:
-            return "Product"
-    return "Commodity"
+    if cols.contains("Commodity"):
+            return "Commodity"
+    return "Product"
 
 
 ''' Where all the stuff is ran '''
 def main():
     type = get_data_type(argv[-1])
-    file = pd.read_excel(argv[-1]).fillna("-0")
+    file = pd.read_excel(argv[-1]).fillna(-3)
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
     elif argv[1] == "num":
         num = NumberChecker(file)
-        num.check_sd(file, 4)
+        num.check_sd(file, 3, 2018)
         print("Done")
     else:
         check = FormatChecker(type)
