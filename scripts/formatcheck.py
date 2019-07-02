@@ -125,10 +125,40 @@ class FormatChecker:
                     if file.loc[row, col] == "-0":
                         print("Row " + str(row + 2) + ": Missing " + col)
 
-    ''' Stuff here '''
+
+
+class NumberChecker:
+    __slots__ = ['col']
+
+    def __init__(self, file):
+        self.col = self.get_vol_rev(file.columns)
+
+    ''' Reports values with difference > 3 SD '''
+    def check_sd(self, file):
+        groups = file.groupby([get_com_pro(file.columns)])
+        for commodity, df in groups:
+            print("-------\n" + commodity + "\n-------")
+            ind = df.index
+            maxSigma = df[self.col].mean() + (df[self.col].std() * 3)
+            minSigma = df[self.col].mean() - (df[self.col].std() * 3)
+
+            for i in ind:
+                value = file.loc[i, self.col]
+                if value >= maxSigma or value <= minSigma:
+                    print(i, value, sep=": ")
+
+    ''' Set threshold '''
     def check_threshold(self, file, min=0, max=0):
-        for i in range(0):
-            print("A")
+        for i in range(len(file[self.col]):
+            foo = file.loc[i, self.col]
+            if foo < min or foo > max:
+                print(i,foo,"A")
+
+    ''' Checks if "Reveneue" or "Volume" is present '''
+    def get_vol_rev(cols):
+        if cols.contains("Revenue"):
+            return "Revenue"
+        return "Volume"
 
 
 class Setup:
