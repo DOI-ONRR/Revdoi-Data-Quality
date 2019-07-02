@@ -278,7 +278,6 @@ def main():
     else:
         type = get_data_type(argv[1])
         file = pd.read_excel(argv[1]).fillna("-0")
-        print(file)
 
         check = FormatChecker(type)
         check.check_header(file)
@@ -289,6 +288,10 @@ def main():
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]))
         print("(Location) W's Found: " + str(w[1]))
+
+        num = NumberChecker(file)
+        num.check_sd(file)
+        num.check_threshold(file, min=100000)
         print("Done")
 
 
