@@ -15,9 +15,10 @@ def excel_diff(path_OLD, path_NEW):
     droppedRows = []
     newRows = []
     changedCells = []
+    exclusionSet = {"Volume", "Revenue"}
 
-    cols_OLD = set(df_OLD.columns)
-    cols_NEW = set(df_NEW.columns)
+    cols_OLD = set(df_OLD.columns) - exclusionSet
+    cols_NEW = set(df_NEW.columns) - exclusionSet
     sharedCols = list(cols_OLD & cols_NEW)
     newCols = list(cols_NEW - cols_OLD)
     droppedCols = list(cols_OLD - cols_NEW)
@@ -31,7 +32,7 @@ def excel_diff(path_OLD, path_NEW):
                     dfDiff.loc[row,col] = df_NEW.loc[row,col]
                 else:
                     dfDiff.loc[row,col] = ('{}→{}').format(value_OLD,value_NEW)
-                    changedCells.append(chr(65 + sharedCols.index(col)) + str(row))
+                    changedCells.append(chr(65 + sharedCols.index(col) + 1) + str(row))
         else:
             newRows.append(row)
 
