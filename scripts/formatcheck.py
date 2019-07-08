@@ -83,7 +83,7 @@ class FormatChecker:
             if replace and replace.__contains__(cell):
                 new_cell = replace[cell]
                 file.loc[row, col] = new_cell
-                print(col, row, "replaced", cell, "with", new_cell)
+                print(col, row, "Found:", cell, "| Replace with:", new_cell)
                 continue
             bad += _check_unit(cell, default, row)
         if bad <= 0 :
@@ -244,7 +244,20 @@ def main():
         print("(Location) W's Found: " + str(w[1]) )
         if argv[2] == "export":
             writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
-            file.to_excel(writer, index=False)
+            file.to_excel(writer, index=False, header=False)
+            workbook = writer.book
+            worksheet = writer.sheets['Sheet1']
+            header_format = workbook.add_format({
+                "align" : "center",
+                "bold" : False,
+                "border" : 1,
+                "bg_color" : "#C0C0C0",
+                "valign" : "bottom"
+            })
+            cur_format = workbook.add_format({'num_format': '$#,##0.00'})
+            num_format = workbook.add_format({'num_format': '#,##0.00'})
+            for col_num, value in enumerate(file.columns.values):
+                worksheet.write(0, col_num, value, header_format)
             writer.save()
             print("Exported new file")
         print("Done")
