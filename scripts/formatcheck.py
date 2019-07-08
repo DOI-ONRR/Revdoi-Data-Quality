@@ -57,7 +57,7 @@ class FormatChecker:
             print("\nNew Cols:", uncheckedCols)
 
     ''' Checks commodities/products for New items or Unexpected units of measurement '''
-    def check_unit_dict(self, file):
+    def check_unit_dict(self, file, replace=None):
 
         def _check_unit(string, default, index):
             # Splits line by Item and Unit
@@ -80,6 +80,11 @@ class FormatChecker:
             return "No Units Available"
         for row in range(len(file[col])):
             cell = file.loc[row, col]
+            if replace and replace.__contains__(cell):
+                new_cell = replace[cell]
+                file.loc[row, col] = new_cell
+                print(col, row, "replaced", cell, "with", new_cell)
+                continue
             bad += _check_unit(cell, default, row)
         if bad <= 0 :
             print("All units valid :)")
@@ -225,19 +230,23 @@ def main():
         config = Setup(file)
         config.write_config(type)
     else:
+        to_replace = {"Mining-Unspecified" : "Humate"}
         type = get_data_type(argv[1])
         file = pd.read_excel(argv[1]).fillna("-0")
-        print(file)
-
         check = FormatChecker(type)
         check.check_header(file)
         print()
-        check.check_unit_dict(file)
+        check.check_unit_dict(file, to_replace)
         check.check_misc_cols(file)
         check.check_nan(file)
         w = check.get_w_count(file)
         print("\n(Volume) W's Found: " + str(w[0]) )
         print("(Location) W's Found: " + str(w[1]) )
+        if argv[2] == "export":
+            writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
+            file.to_excel(writer, index=False)
+            writer.save()
+            print("Exported new file")
         print("Done")
 
 if __name__ == '__main__':
