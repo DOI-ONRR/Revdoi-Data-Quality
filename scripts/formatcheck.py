@@ -68,7 +68,7 @@ class FormatChecker:
                     print('Row ' + str(index) + ': Expected Unit - (' + line[1]
                         + ') [For Item: ' + line[0] + ']')
                     return 1
-            elif line[0] != "-0":
+            elif line[0] != "":
                 print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
                 return 1
             return 0
@@ -100,7 +100,7 @@ class FormatChecker:
             if file.columns.contains(field):
                 for row in range(len(file[field])):
                     cell = file.loc[row, field]
-                    if cell not in default.get(field) and cell != "-0":
+                    if cell not in default.get(field) and cell != "":
                         print(field + ' Row ' + str(row)
                             + ': Unexpected Entry: ' + str(cell))
                         bad = True
@@ -115,7 +115,7 @@ class FormatChecker:
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
-                    if file.loc[row, col] == "-0":
+                    if file.loc[row, col] == "":
                         print("Row " + str(row) + ": Missing " + col)
 
 
@@ -235,7 +235,7 @@ def main():
     else:
         to_replace = {"Mining-Unspecified" : "Humate"}
         type = get_data_type(argv[1])
-        file = pd.read_excel(argv[1]).fillna("-0")
+        file = pd.read_excel(argv[1]).fillna("")
         check = FormatChecker(type)
         check.check_header(file)
         print()
