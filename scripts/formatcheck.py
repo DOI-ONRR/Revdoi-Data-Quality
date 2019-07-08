@@ -76,16 +76,19 @@ class FormatChecker:
         default = self.config.units
         bad = 0
         col = get_com_pro(file.columns)
+        replaced_dict = {i:[] for i in replace.keys()}
         if col == "n/a":
             return "No Units Available"
         for row in range(len(file[col])):
             cell = file.loc[row, col]
             if replace and replace.__contains__(cell):
                 new_cell = replace[cell]
-                file.loc[row, col] = new_cell
-                print(col, row, "Found:", cell, "| Replace with:", new_cell)
+                # file.loc[row, col] = new_cell
+                # print(col, row, "Found:", cell, "| Replace with:", new_cell)
+                replaced_dict.get(cell).append(row + 1)
                 continue
             bad += _check_unit(cell, default, row)
+        print("Items to replace: ", replaced_dict)
         if bad <= 0 :
             print("All units valid :)")
 
@@ -102,7 +105,7 @@ class FormatChecker:
                             + ': Unexpected Entry: ' + str(cell))
                         bad = True
         if not bad:
-            print("All fields valid")
+            print("All fields valid :)")
 
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
@@ -243,6 +246,7 @@ def main():
         print("\n(Volume) W's Found: " + str(w[0]) )
         print("(Location) W's Found: " + str(w[1]) )
         if argv[2] == "export":
+            file.replace(to_replace, inplace=True)
             writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
             file.to_excel(writer, index=False, header=False)
             workbook = writer.book
