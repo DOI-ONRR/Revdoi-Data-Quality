@@ -64,6 +64,8 @@ class FormatChecker:
     def check_unit_dict(self, file):
 
         def _check_unit(string, default, index):
+            if string == 0:
+                return 0
             # Splits line by Item and Unit
             line = split_unit(string)
             # Checks if Item is valid and has correct units
@@ -72,7 +74,7 @@ class FormatChecker:
                     print('Row ' + str(index) + ': Expected Unit - (' + line[1]
                           + ') [For Item: ' + line[0] + ']')
                     return 1
-            elif line[0] != --3:
+            elif line[0] != 0:
                 print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
                 return 1
             return 0
@@ -98,7 +100,7 @@ class FormatChecker:
             if file.columns.contains(field):
                 for row in range(len(file[field])):
                     cell = file.loc[row, field]
-                    if cell not in default.get(field) and cell != -3:
+                    if cell not in default.get(field) and cell != 0:
                         print(field + ' Row ' + str(row + 2)
                             + ': Unexpected Entry: ' + str(cell))
                         bad = True
@@ -122,7 +124,7 @@ class FormatChecker:
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
-                    if file.loc[row, col] == -3:
+                    if file.loc[row, col] == 0:
                         print("Row " + str(row + 2) + ": Missing " + col)
 
 
@@ -134,19 +136,18 @@ class NumberChecker:
         self.col = self._get_vol_rev(file.columns)
 
     ''' Reports values with difference > n SD '''
-    def check_sd(self, file, sd, year=datetime.now().year):
-        groups = file.groupby([get_com_pro(file.columns),"Calendar Year"])
+    def check_sd(self, file, sd):
+        groups = file.groupby([get_com_pro(file.columns)])
+        deviationPresent = False
         for item, df in groups:
-            if item[0] == -3 or item[1] != year:
+            if item == 0:
                 continue
             ind = df.index
             mean = df[self.col].mean()
             std = df[self.col].std() * sd
 
             maxSigma = mean + std
-            minSigma = mean
-            if not isnan(std):
-                minSigma -= std
+            minSigma = mean - std
 
             deviations = []
 
@@ -155,10 +156,13 @@ class NumberChecker:
                 if value > maxSigma or value < minSigma:
                     deviations.append(str(i) + ": " + str(value))
             if deviations:
+                deviationPresent = True
                 print("------------------------\n", item,
                         minSigma, "|", maxSigma, "\n------------------------")
                 for j in deviations:
                     print(j)
+        if not deviationPresent:
+            print("No deviations present")
 
     ''' Set threshold '''
     def check_threshold(self, file, min=0, max=0):
@@ -281,13 +285,13 @@ def get_com_pro(cols):
 ''' Where all the stuff is ran '''
 def main():
     type = get_data_type(argv[-1])
-    file = pd.read_excel(argv[-1]).fillna(-3)
+    file = pd.read_excel(argv[-1]).fillna(0)
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
     elif argv[1] == "num":
         num = NumberChecker(file)
-        num.check_sd(file, 3, 2018)
+        num.check_sd(file, 3)
         print("Done")
     else:
         check = FormatChecker(type)
