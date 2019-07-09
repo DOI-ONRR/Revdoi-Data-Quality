@@ -9,24 +9,24 @@ import pickle
 from sys import argv
 
 class FormatChecker:
-    __slots__ = ['config']
-    ''' Constructor for FormatChecker. Uses config based on data type '''
+    __slots__ = ["config"]
+    """ Constructor for FormatChecker. Uses config based on data type """
     def __init__(self, type):
         self.config = self.read_config(type)
 
-    ''' Returns an unpickled Setup object '''
+    """ Returns an unpickled Setup object """
     def read_config(self, type):
         with open("config/" + type + "config.bin", "rb") as config:
             return pickle.load(config)
 
-    ''' Returns number of W's found for Volume and Location '''
+    """ Returns number of Ws found for Volume and Location """
     def get_w_count(self, file):
         volume_w_count = 0
         state_w_count = 0
         # If Volume is present in file
         if file.columns.contains("Volume"):
             for row in file["Volume"]:
-                if row == 'W':
+                if row == "W":
                     volume_w_count += 1
         # If State is present in file
         if file.columns.contains("State"):
@@ -36,7 +36,7 @@ class FormatChecker:
         # Returns Tuple of W count
         return volume_w_count, state_w_count
 
-    ''' Checks header for Order and missing or unexpected field names '''
+    """ Checks header for Order and missing or unexpected field names """
     def check_header(self, file):
         default = self.config.header
         columns = file.columns
@@ -60,7 +60,7 @@ class FormatChecker:
                 if col.endswith(" ") or col.startswith(" "):
                     print("Whitespace found for: " + col)
 
-    ''' Checks commodities/products for New items or Unexpected units of measurement '''
+    """ Checks commodities/products for New items or Unexpected units of measurement """
     def check_unit_dict(self, file, replace=None):
 
         def _check_unit(string, default, index):
@@ -71,11 +71,11 @@ class FormatChecker:
             # Checks if Item is valid and has correct units
             if default.__contains__(line[0]):
                 if line[1] not in default.get(line[0]):
-                    print('Row ' + str(index) + ': Expected Unit - (' + line[1]
-                          + ') [For Item: ' + line[0] + ']')
+                    print("Row " + str(index) + ": Expected Unit - (" + line[1]
+                          + ") [For Item: " + line[0] + "]")
                     return 1
             elif line[0] != "":
-                print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
+                print(col + " Row " + str(index) + ": Unknown Item: " + line[0])
                 return 1
             return 0
 
@@ -96,24 +96,24 @@ class FormatChecker:
         if bad <= 0 :
             print("All units valid :)")
 
-    ''' Checks non-numerical columns for Unexpected Values '''
+    """ Checks non-numerical columns for Unexpected Values """
     def check_misc_cols(self, file):
         default = self.config.field_dict
         bad = False
-        if file.columns.contains('Calendar Year'):
-            self.check_year(file['Calendar Year'])
+        if file.columns.contains("Calendar Year"):
+            self.check_year(file["Calendar Year"])
         for field in default:
             if file.columns.contains(field):
                 for row in range(len(file[field])):
                     cell = file.loc[row, field]
                     if cell not in default.get(field) and cell != "":
-                        print(field + ' Row ' + str(row)
-                            + ': Unexpected Entry: ' + str(cell))
+                        print(field + " Row " + str(row)
+                            + ": Unexpected Entry: " + str(cell))
                         bad = True
         if not bad:
             print("All fields valid :)")
 
-    ''' Checks if year column is valid '''
+    """ Checks if year column is valid """
     def check_year(self, cy):
         current_year = datetime.now().year
         current_month = datetime.now().month
@@ -122,7 +122,7 @@ class FormatChecker:
             if cy[y] not in years:
                 print("Row " + str(y + 2) + ": Invalid year " + str(cy[y]))
 
-    ''' Checks if specific columns are missing values '''
+    """ Checks if specific columns are missing values """
     def check_nan(self, file):
         cols = ["Calendar Year", "Corperate Name", "Ficsal Year",
                 "Mineral Lease Type", "Month", "Onshore/Offshore", "Volume"]
@@ -135,12 +135,12 @@ class FormatChecker:
 
 
 class NumberChecker:
-    __slots__ = ['col']
+    __slots__ = ["col"]
 
     def __init__(self, file):
         self.col = self._get_vol_rev(file.columns)
 
-    ''' Reports values with difference > n SD '''
+    """ Reports values with difference > n SD """
     def check_sd(self, file, sd):
         groups = file.groupby([get_com_pro(file.columns)])
         deviationPresent = False
@@ -169,14 +169,14 @@ class NumberChecker:
         if not deviationPresent:
             print("No deviations present")
 
-    ''' Set threshold '''
+    """ Set threshold """
     def check_threshold(self, file, min=0, max=0):
         for i in range(len(file[self.col])):
             foo = file.loc[i, self.col]
             if foo > max:
                 print(i,foo,"A")
 
-    ''' Checks if "Revenue" or "Volume" is present '''
+    """ Checks if "Revenue" or "Volume" is present """
     def _get_vol_rev(self, cols):
         if cols.contains("Revenue"):
             return "Revenue"
@@ -184,14 +184,14 @@ class NumberChecker:
 
 
 class Setup:
-    __slots__ = ['header', 'units', 'field_dict']
+    __slots__ = ["header", "units", "field_dict"]
 
-    ''' Constructor for Setup '''
+    """ Constructor for Setup """
     def __init__(self, file=None):
         if file is not None:
             self.set_file(file)
 
-    ''' Sets variables based on file given '''
+    """ Sets variables based on file given """
     def set_file(self, file):
         self.header = self.get_header(file) # List
         self.units = self.get_unit_dict(file) # Dictionary
@@ -219,8 +219,8 @@ class Setup:
 
     """ Returns a dictionary of fields not listed in col_wlist """
     def get_misc_cols(self, file):
-        col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
-                     'Total' , 'Calendar Year'}
+        col_wlist = {"Revenue", "Volume", "Month", "Production Volume",
+                     "Total" , "Calendar Year"}
         col_wlist.add(get_com_pro(file.columns))
         fields = {}
         for col in file.columns:
@@ -230,9 +230,9 @@ class Setup:
 
     """ Writes a bin file containing all variables from Setup """
     def write_config(self, type):
-        if not os.path.exists('config'):
-            print('No Config Folder found. Creating folder...')
-            os.mkdir('config')
+        if not os.path.exists("config"):
+            print("No Config Folder found. Creating folder...")
+            os.mkdir("config")
         with open("config/" + type + "config.bin", "wb") as config:
             pickle.dump(self, config)
 
@@ -261,7 +261,7 @@ def split_unit(string):
     elif "," in string:
         return string.split(", ",1)
     # In case no unit is found
-    return [string,'']
+    return [string,"]
 
 """ Adds key to dictionary if not present. Else adds value to key set.
 Keyword arguements:
@@ -277,7 +277,7 @@ def add_item(key, value, dictionary):
     else:
         dictionary[key] = {value}
 
-''' Checks if "Commodity", "Product", both, or neither are present '''
+""" Checks if "Commodity", "Product", both, or neither are present """
 def get_com_pro(cols):
     if not cols.contains("Product") and not cols.contains("Commodity"):
         return "n/a"
@@ -285,7 +285,7 @@ def get_com_pro(cols):
             return "Commodity"
     return "Product"
 
-''' Creates FormatChecker and runs methods '''
+""" Creates FormatChecker and runs methods """
 def do_check(file, type, to_replace):
     check = FormatChecker(type)
     check.check_header(file)
@@ -295,16 +295,16 @@ def do_check(file, type, to_replace):
     check.check_misc_cols(file)
     check.check_nan(file)
     w = check.get_w_count(file)
-    print("\n(Volume) W's Found: " + str(w[0]))
-    print("(Location) W's Found: " + str(w[1]))
+    print("\n(Volume) Ws Found: " + str(w[0]))
+    print("(Location) Ws Found: " + str(w[1]))
 
-''' Exports an Excel file with replaced entries '''
+""" Exports an Excel file with replaced entries """
 def export_excel(file, to_replace):
     file.replace(to_replace, inplace=True)
-    writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
+    writer = pd.ExcelWriter("PlaceholderName.xlsx", engine="xlsxwriter")
     file.to_excel(writer, index=False, header=False)
     workbook = writer.book
-    worksheet = writer.sheets['Sheet1']
+    worksheet = writer.sheets["Sheet1"]
     header_format = workbook.add_format({
         "align" : "center",
         "bold" : False,
@@ -312,15 +312,15 @@ def export_excel(file, to_replace):
         "bg_color" : "#C0C0C0",
         "valign" : "bottom"
     })
-    cur_format = workbook.add_format({'num_format': '$#,##0.00'})
-    num_format = workbook.add_format({'num_format': '#,##0.00'})
+    cur_format = workbook.add_format({"num_format": "$#,##0.00"})
+    num_format = workbook.add_format({"num_format": "#,##0.00"})
     for col_num, value in enumerate(file.columns.values):
         worksheet.write(0, col_num, value, header_format)
     writer.save()
     print("Exported new file")
 
 
-''' Where all the stuff is ran '''
+""" Where all the stuff is ran """
 def main():
     type = get_data_type(argv[-1])
     file = pd.read_excel(argv[-1]).fillna("")
@@ -338,5 +338,5 @@ def main():
     print("Done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
