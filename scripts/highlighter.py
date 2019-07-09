@@ -111,6 +111,9 @@ class FormatChecker:
                         print("Row " + str(row + 2) + ": Missing " + col)
                         file.loc[row, col] = '[N/A]'
 
+    def replace_item(self, file, row, col):
+        pass
+
 
 class Setup:
     __slots__ = ['header', 'units', 'field_dict']
