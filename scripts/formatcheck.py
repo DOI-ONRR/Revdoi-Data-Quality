@@ -238,7 +238,6 @@ class Setup:
             os.mkdir('config')
         with open("config/" + type + "config.bin", "wb") as config:
             pickle.dump(self, config)
-        print("Setup Complete")
 
 
 
@@ -289,51 +288,56 @@ def get_com_pro(cols):
             return "Commodity"
     return "Product"
 
+''' Creates FormatChecker and runs methods '''
+def do_check(file, type):
+    to_replace = {"Mining-Unspecified" : "Humate"}
+    check = FormatChecker(type)
+    check.check_header(file)
+    print()
+    check.check_unit_dict(file, to_replace)
+    check.check_misc_cols(file)
+    check.check_nan(file)
+    w = check.get_w_count(file)
+    print("\n(Volume) W's Found: " + str(w[0]))
+    print("(Location) W's Found: " + str(w[1]))
+
+''' Exports an Excel file with replaced entries '''
+def export_excel(file):
+    file.replace(to_replace, inplace=True)
+    writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
+    file.to_excel(writer, index=False, header=False)
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+    header_format = workbook.add_format({
+        "align" : "center",
+        "bold" : False,
+        "border" : 1,
+        "bg_color" : "#C0C0C0",
+        "valign" : "bottom"
+    })
+    cur_format = workbook.add_format({'num_format': '$#,##0.00'})
+    num_format = workbook.add_format({'num_format': '#,##0.00'})
+    for col_num, value in enumerate(file.columns.values):
+        worksheet.write(0, col_num, value, header_format)
+    writer.save()
+    print("Exported new file")
+
 
 ''' Where all the stuff is ran '''
 def main():
     type = get_data_type(argv[-1])
-    file = pd.read_excel(argv[-1]).fillna(0)
+    file = pd.read_excel(argv[-1]).fillna("")
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
     elif argv[1] == "num":
         num = NumberChecker(file)
         num.check_sd(file, 3)
-        print("Done")
     else:
-        to_replace = {"Mining-Unspecified" : "Humate"}
-        type = get_data_type(argv[1])
-        file = pd.read_excel(argv[1]).fillna("")
-        check = FormatChecker(type)
-        check.check_header(file)
-        print()
-        check.check_unit_dict(file, to_replace)
-        check.check_misc_cols(file)
-        check.check_nan(file)
-        w = check.get_w_count(file)
-        print("\n(Volume) W's Found: " + str(w[0]) )
-        print("(Location) W's Found: " + str(w[1]) )
-        if argv[2] == "export":
-            file.replace(to_replace, inplace=True)
-            writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
-            file.to_excel(writer, index=False, header=False)
-            workbook = writer.book
-            worksheet = writer.sheets['Sheet1']
-            header_format = workbook.add_format({
-                "align" : "center",
-                "bold" : False,
-                "border" : 1,
-                "bg_color" : "#C0C0C0",
-                "valign" : "bottom"
-            })
-            cur_format = workbook.add_format({'num_format': '$#,##0.00'})
-            num_format = workbook.add_format({'num_format': '#,##0.00'})
-            for col_num, value in enumerate(file.columns.values):
-                worksheet.write(0, col_num, value, header_format)
-            writer.save()
-            print("Exported new file")
-        print("Done")
+        do_check(file, type)
+        if argv[1] == "export":
+            export_excel(file)
+    print("Done")
 
 
 if __name__ == '__main__':
