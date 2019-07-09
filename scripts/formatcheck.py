@@ -64,7 +64,7 @@ class FormatChecker:
     def check_unit_dict(self, file, replace=None):
 
         def _check_unit(string, default, index):
-            if string == 0:
+            if string == "":
                 return 0
             # Splits line by Item and Unit
             line = split_unit(string)
@@ -131,7 +131,7 @@ class FormatChecker:
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
-                    if file.loc[row, col] == 0:
+                    if file.loc[row, col] == "":
                         print("Row " + str(row + 2) + ": Missing " + col)
 
 
@@ -147,7 +147,7 @@ class NumberChecker:
         groups = file.groupby([get_com_pro(file.columns)])
         deviationPresent = False
         for item, df in groups:
-            if item == 0:
+            if item == "":
                 continue
             ind = df.index
             mean = df[self.col].mean()
@@ -178,7 +178,7 @@ class NumberChecker:
             if foo > max:
                 print(i,foo,"A")
 
-    ''' Checks if "Reveneue" or "Volume" is present '''
+    ''' Checks if "Revenue" or "Volume" is present '''
     def _get_vol_rev(self, cols):
         if cols.contains("Revenue"):
             return "Revenue"
