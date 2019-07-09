@@ -127,8 +127,7 @@ class FormatChecker:
     ''' Checks if specific columns are missing values '''
     def check_nan(self, file):
         cols = ["Calendar Year", "Corperate Name", "Ficsal Year",
-                "Mineral Lease Type", "Month", "Onshore/Offshore",
-                "Revenue", "Volume"]
+                "Mineral Lease Type", "Month", "Onshore/Offshore", "Volume"]
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
@@ -289,12 +288,12 @@ def get_com_pro(cols):
     return "Product"
 
 ''' Creates FormatChecker and runs methods '''
-def do_check(file, type):
-    to_replace = {"Mining-Unspecified" : "Humate"}
+def do_check(file, type, to_replace):
     check = FormatChecker(type)
     check.check_header(file)
     print()
     check.check_unit_dict(file, to_replace)
+    print()
     check.check_misc_cols(file)
     check.check_nan(file)
     w = check.get_w_count(file)
@@ -302,7 +301,7 @@ def do_check(file, type):
     print("(Location) W's Found: " + str(w[1]))
 
 ''' Exports an Excel file with replaced entries '''
-def export_excel(file):
+def export_excel(file, to_replace):
     file.replace(to_replace, inplace=True)
     writer = pd.ExcelWriter("PlaceholderName.xlsx", engine='xlsxwriter')
     file.to_excel(writer, index=False, header=False)
@@ -327,6 +326,7 @@ def export_excel(file):
 def main():
     type = get_data_type(argv[-1])
     file = pd.read_excel(argv[-1]).fillna("")
+    to_replace = {"Mining-Unspecified" : "Humate"}
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
@@ -334,9 +334,9 @@ def main():
         num = NumberChecker(file)
         num.check_sd(file, 3)
     else:
-        do_check(file, type)
+        do_check(file, type, to_replace)
         if argv[1] == "export":
-            export_excel(file)
+            export_excel(file, to_replace)
     print("Done")
 
 
