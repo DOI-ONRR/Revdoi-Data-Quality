@@ -228,14 +228,38 @@ class Setup:
                 fields[col] = { i for i in file[col] }
         return fields
 
-    ''' Writes a bin file containing all variables from Setup '''
-    def write_config(self, type):
+    def make_config_path(self):
         if not os.path.exists('config'):
             print('No Config Folder found. Creating folder...')
             os.mkdir('config')
+
+    ''' Writes a bin file containing all variables from Setup '''
+    def write_config(self, type):
+        self.make_config_path()
         with open('config/' + type + 'config.bin', 'wb') as config:
+            print(pickle.dumps(self))
             pickle.dump(self, config)
 
+    # def read_text(self):
+    #     for i in range(3):
+    #         print(i)
+    #
+    # def write_text(self, type):
+    #     self.make_config_path()
+    #     with open('config/' + type + '.txt', 'w') as config:
+    #         for k,v in self.units.items():
+    #             for u in v:
+    #                 line = k + " = " +  u.strip("'")  + '\n'
+    #                 config.write(line)
+    #         print('---')
+    #         for field in self.header:
+    #             config.write(field + '\n')
+    #         print('---')
+    #         for k,v in self.fields.items():
+    #             for u in v:
+    #                 line = k + " = " +  u.strip("'")  + '\n'
+    #                 config.write(line)
+    #         print('---')
 
 
 ''' For naming config files '''
@@ -262,6 +286,7 @@ def split_unit(string):
         return string.split(', ',1)
     # In case no unit is found
     return [string,'']
+
 
 ''' Adds key to dictionary if not present. Else adds value to key set.
 Keyword arguements:
