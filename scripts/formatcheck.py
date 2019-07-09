@@ -89,8 +89,6 @@ class FormatChecker:
             cell = file.loc[row, col]
             if replace and replace.__contains__(cell):
                 new_cell = replace[cell]
-                # file.loc[row, col] = new_cell
-                # print(col, row, "Found:", cell, "| Replace with:", new_cell)
                 replaced_dict.get(cell).append(row + 1)
                 continue
             bad += _check_unit(cell, default, row)
@@ -116,7 +114,7 @@ class FormatChecker:
             print("All fields valid :)")
 
     ''' Checks if year column is valid '''
-    def check_year(self,cy):
+    def check_year(self, cy):
         current_year = datetime.now().year
         current_month = datetime.now().month
         years = { i for i in range(current_year, 1969, -1) }
@@ -326,13 +324,13 @@ def export_excel(file, to_replace):
 def main():
     type = get_data_type(argv[-1])
     file = pd.read_excel(argv[-1]).fillna("")
-    to_replace = {"Mining-Unspecified" : "Humate"}
+    to_replace = {"Mining-Unspecified" : "Humate"} #Entries to be replaced
     if argv[1] == "setup":
         config = Setup(file)
         config.write_config(type)
     elif argv[1] == "num":
         num = NumberChecker(file)
-        num.check_sd(file, 3)
+        num.check_sd(file, sd=3)
     else:
         do_check(file, type, to_replace)
         if argv[1] == "export":
