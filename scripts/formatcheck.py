@@ -93,7 +93,7 @@ class FormatChecker:
         # Checks if Item is valid and has correct units
         if default.__contains__(line[0]):
             if line[1] not in default.get(line[0]):
-                print('Row ' + str(index) + ': Expected Unit - (' + line[1]
+                print('Row ' + str(index) + ': Unexpected Unit - (' + line[1]
                       + ') [For Item: ' + line[0] + ']')
                 return 1
         elif line[0] != '':
@@ -200,8 +200,9 @@ class Setup:
     '''
     def add_item(self, key, value, dict):
         # Adds Value to Set if Key exists
-        if key in dict and value not in dict.get(key):
-            dict[key].append(value)
+        if key in dict:
+            if value not in dict.get(key):
+                dict[key].append(value)
         # Else adds new key with value
         else:
             dict[key] = [value]
