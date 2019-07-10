@@ -2,11 +2,10 @@ __author__ = 'Edward Chang'
 
 # Imports
 from datetime import datetime
-from math import isnan
 import json
 import os
 import pandas as pd
-from sys import argv
+import sys
 
 class FormatChecker:
 
@@ -122,7 +121,7 @@ class FormatChecker:
     def check_year(self, cy):
         current_year = datetime.now().year
         current_month = datetime.now().month
-        years = { i for i in range(current_year, 1969, -1) }
+        years = {i for i in range(current_year, 1969, -1)}
         for y in range(len(cy)):
             if cy[y] not in years:
                 print('Row ' + str(y + 2) + ': Invalid year ' + str(cy[y]))
@@ -236,7 +235,7 @@ class Setup:
         fields = {}
         for col in self.file.columns:
             if col not in col_wlist:
-                fields[col] = list({ i for i in self.file[col] })
+                fields[col] = list({i for i in self.file[col]})
         return fields
 
     def get_replace_dict(self):
@@ -255,7 +254,8 @@ class Setup:
             json_config = {'header' : self.get_header(),
                            'unit_dict' : self.get_unit_dict(),
                            'field_dict' : self.get_misc_cols(),
-                           'replace_dict': self.get_replace_dict()}
+                           'replace_dict' : self.get_replace_dict(),
+                           'withheld_check' : []}
             json.dump(json_config, config, indent = 4)
 
 
@@ -332,18 +332,18 @@ def export_excel(file, to_replace):
 
 ''' Where all the stuff is ran '''
 def main():
-    type = get_data_type(argv[-1])
-    file = pd.read_excel(argv[-1]).fillna('')
+    type = get_data_type(sys.argv[-1])
+    file = pd.read_excel(sys.argv[-1]).fillna('')
     to_replace = {'Mining-Unspecified' : 'Humate'} #Entries to be replaced
-    if argv[1] == 'setup':
+    if sys.argv[1] == 'setup':
         config = Setup(file)
         config.write_config(type)
-    elif argv[1] == 'num':
+    elif sys.argv[1] == 'num':
         num = NumberChecker(file)
         num.check_sd(file, sd=3)
     else:
         do_check(file, type, to_replace)
-        if argv[1] == 'export':
+        if sys.argv[1] == 'export':
             export_excel(file, to_replace)
     print('Done')
 
