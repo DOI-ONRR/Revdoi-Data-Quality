@@ -138,7 +138,6 @@ class FormatChecker:
             print('All fields valid :)')
 
 
-
     def check_year(self, col):
         '''Checks if year column is valid
         Keyword Arguements:
@@ -154,14 +153,12 @@ class FormatChecker:
     def check_nan(self, file):
         '''Checks if specific columns are missing values
         '''
-        cols = ['Calendar Year', 'Corperate Name', 'Ficsal Year',
-                'Mineral Lease Type', 'Month', 'Onshore/Offshore', 'Volume']
+        cols = self.config['na_check']
         for col in cols:
             if file.columns.contains(col):
                 for row in range(len(file.index)):
                     if file.loc[row, col] == '':
                         print('Row ' + str(row + 2) + ': Missing ' + col)
-
 
 
 class NumberChecker:
@@ -285,9 +282,11 @@ class Setup:
                            'unit_dict' : self.get_unit_dict(),
                            'field_dict' : self.get_misc_cols(),
                            'replace_dict' : self.get_replace_dict(),
-                           'withheld_check' : []}
-            json.dump(json_config, config, indent=4)
-
+                           'na_check' : ['Calendar Year', 'Corperate Name', 
+                                         'Ficsal Year','Mineral Lease Type', 
+                                         'Month', 'Onshore/Offshore', 'Volume']
+                           }
+            json.dump(json_config, config, indent=4)    
 
 
 def add_item(key, value, dct):
