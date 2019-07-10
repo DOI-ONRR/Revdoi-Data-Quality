@@ -3,21 +3,23 @@ __author__ = 'Edward Chang'
 # Imports
 from datetime import datetime
 from math import isnan
+import json
 import os
 import pandas as pd
-import pickle
 from sys import argv
 
 class FormatChecker:
+
     __slots__ = ['config']
+
     ''' Constructor for FormatChecker. Uses config based on data type '''
     def __init__(self, type):
         self.config = self.read_config(type)
 
     ''' Returns an unpickled Setup object '''
     def read_config(self, type):
-        with open('config/' + type + 'config.bin', 'rb') as config:
-            return pickle.load(config)
+        with open('config/' + type + 'config.json', 'r') as config:
+            return json.load(config)
 
     ''' Returns number of Ws found for Volume and Location '''
     def get_w_count(self, file):
@@ -38,7 +40,7 @@ class FormatChecker:
 
     ''' Checks header for Order and missing or unexpected field names '''
     def check_header(self, file):
-        default = self.config.header
+        default = self.config['header']
         columns = file.columns
         # Set of Unchecked columns.
         uncheckedCols = set(columns)
@@ -62,27 +64,11 @@ class FormatChecker:
 
     ''' Checks commodities/products for New items or Unexpected units of measurement '''
     def check_unit_dict(self, file, replace=None):
-
-        def _check_unit(string, default, index):
-            if string == '':
-                return 0
-            # Splits line by Item and Unit
-            line = split_unit(string)
-            # Checks if Item is valid and has correct units
-            if default.__contains__(line[0]):
-                if line[1] not in default.get(line[0]):
-                    print('Row ' + str(index) + ': Expected Unit - (' + line[1]
-                          + ') [For Item: ' + line[0] + ']')
-                    return 1
-            elif line[0] != '':
-                print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
-                return 1
-            return 0
-
-        default = self.config.units
+        default = self.config['unit_dict']
         bad = 0
         col = get_com_pro(file.columns)
         replaced_dict = {i:[] for i in replace.keys()}
+        is_replaced = False
         if col == 'n/a':
             return 'No Units Available'
         for row in range(len(file[col])):
@@ -90,15 +76,34 @@ class FormatChecker:
             if replace and replace.__contains__(cell):
                 new_cell = replace[cell]
                 replaced_dict.get(cell).append(row + 1)
+                is_replaced = True
                 continue
-            bad += _check_unit(cell, default, row)
-        print('Items to replace: ', replaced_dict)
+            bad += self._check_unit(cell, default, row)
+        if is_replaced:
+            print('Items to replace: ', replaced_dict)
         if bad <= 0 :
             print('All units valid :)')
 
+    ''' Checks if unit and unit in unit_dict '''
+    def _check_unit(self, string, default, index):
+        if string == '':
+            return 0
+        # Splits line by Item and Unit
+        line = split_unit(string)
+        # Checks if Item is valid and has correct units
+        if default.__contains__(line[0]):
+            if line[1] not in default.get(line[0]):
+                print('Row ' + str(index) + ': Expected Unit - (' + line[1]
+                      + ') [For Item: ' + line[0] + ']')
+                return 1
+        elif line[0] != '':
+            print(col + ' Row ' + str(index) + ': Unknown Item: ' + line[0])
+            return 1
+        return 0
+
     ''' Checks non-numerical columns for Unexpected Values '''
     def check_misc_cols(self, file):
-        default = self.config.field_dict
+        default = self.config['field_dict']
         bad = False
         if file.columns.contains('Calendar Year'):
             self.check_year(file['Calendar Year'])
@@ -184,82 +189,74 @@ class NumberChecker:
 
 
 class Setup:
-    __slots__ = ['header', 'units', 'field_dict']
+
+    __slots__ =  ['file']
+
+    ''' Adds key to dictionary if not present. Else adds value to key set.
+    Keyword arguements:
+    key -- Key entry for the dict, e.g. A commodity
+    value -- Value entry corresponding to key, e.g. Unit or Value
+    dictionary -- Reference to dictionary
+    '''
+    def add_item(self, key, value, dict):
+        # Adds Value to Set if Key exists
+        if key in dict and value not in dict.get(key):
+            dict[key].append(value)
+        # Else adds new key with value
+        else:
+            dict[key] = [value]
 
     ''' Constructor for Setup '''
-    def __init__(self, file=None):
-        if file is not None:
-            self.set_file(file)
+    def __init__(self, file):
+        self.file = file
 
-    ''' Sets variables based on file given '''
-    def set_file(self, file):
-        self.header = self.get_header(file) # List
-        self.units = self.get_unit_dict(file) # Dictionary
-        self.field_dict = self.get_misc_cols(file) # Dictionary
-
-    ''' Returns Header List based on Excel file
-    Keyword arguements:
-    file -- A Pandas DataFrame
-    '''
-    def get_header(self, file):
-        return list(file.columns)
+    ''' Returns Header List based on Excel file  '''
+    def get_header(self):
+        return list(self.file.columns)
 
     ''' Returns Unit Dictionary on Excel file '''
-    def get_unit_dict(self, file):
+    def get_unit_dict(self):
         u = {}
-        col = get_com_pro(file.columns)
+        col = get_com_pro(self.file.columns)
         if col == 'n/a':
             return
-        for row in file[col]:
+        for row in self.file[col]:
             # Key and Value split
             line = split_unit(row)
             k,v = line[0], line[1]
-            add_item(k, v, u)
+            self.add_item(k, v, u)
         return u
 
     ''' Returns a dictionary of fields not listed in col_wlist '''
-    def get_misc_cols(self, file):
+    def get_misc_cols(self):
         col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
                      'Total' , 'Calendar Year'}
-        col_wlist.add(get_com_pro(file.columns))
+        col_wlist.add(get_com_pro(self.file.columns))
         fields = {}
-        for col in file.columns:
+        for col in self.file.columns:
             if col not in col_wlist:
-                fields[col] = { i for i in file[col] }
+                fields[col] = list({ i for i in self.file[col] })
         return fields
 
+    def get_replace_dict(self):
+        return {'Mining-Unspecified' : 'Humate'} #Entries to be replaced
+
+    ''' Creates directory "config" if it does not exist '''
     def make_config_path(self):
         if not os.path.exists('config'):
             print('No Config Folder found. Creating folder...')
             os.mkdir('config')
 
-    ''' Writes a bin file containing all variables from Setup '''
+    ''' Writes a json file containing all variables from Setup '''
     def write_config(self, type):
         self.make_config_path()
-        with open('config/' + type + 'config.bin', 'wb') as config:
-            print(pickle.dumps(self))
-            pickle.dump(self, config)
+        with open('config/' + type + 'config.json', 'w') as config:
+            json_config = {'header' : self.get_header(),
+                           'unit_dict' : self.get_unit_dict(),
+                           'field_dict' : self.get_misc_cols(),
+                           'replace_dict': self.get_replace_dict()}
+            json.dump(json_config, config, indent = 4)
 
-    # def read_text(self):
-    #     for i in range(3):
-    #         print(i)
-    #
-    # def write_text(self, type):
-    #     self.make_config_path()
-    #     with open('config/' + type + '.txt', 'w') as config:
-    #         for k,v in self.units.items():
-    #             for u in v:
-    #                 line = k + " = " +  u.strip("'")  + '\n'
-    #                 config.write(line)
-    #         print('---')
-    #         for field in self.header:
-    #             config.write(field + '\n')
-    #         print('---')
-    #         for k,v in self.fields.items():
-    #             for u in v:
-    #                 line = k + " = " +  u.strip("'")  + '\n'
-    #                 config.write(line)
-    #         print('---')
 
 
 ''' For naming config files '''
@@ -288,19 +285,6 @@ def split_unit(string):
     return [string,'']
 
 
-''' Adds key to dictionary if not present. Else adds value to key set.
-Keyword arguements:
-key -- Key entry for the dict, e.g. A commodity
-value -- Value entry corresponding to key, e.g. Unit or Value
-dictionary -- Reference to dictionary
-'''
-def add_item(key, value, dictionary):
-    # Adds Value to Set if Key exists
-    if key in dictionary:
-        dictionary[key].add(value)
-    # Else adds new key with value
-    else:
-        dictionary[key] = {value}
 
 ''' Checks if 'Commodity', 'Product', both, or neither are present '''
 def get_com_pro(cols):
