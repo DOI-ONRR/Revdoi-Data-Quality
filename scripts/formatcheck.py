@@ -26,14 +26,10 @@ class FormatChecker:
         state_w_count = 0
         # If Volume is present in file
         if file.columns.contains('Volume'):
-            for row in file['Volume']:
-                if row == 'W':
-                    volume_w_count += 1
+            volume_w_count = file['Volume'].eq('W').sum()
         # If State is present in file
         if file.columns.contains('State'):
-            for row in file['State']:
-                if row == 'Withheld':
-                    state_w_count += 1
+             state_w_count = file['State'].eq('Withheld').sum()
         # Returns Tuple of W count
         return volume_w_count, state_w_count
 
@@ -276,14 +272,14 @@ def split_unit(string):
     string = str(string)
     # For general purpose commodities
     if '(' in string:
-        split = string.rsplit(' (',1)
+        split = string.rsplit(' (', 1)
         split[1] = split[1].rstrip(')')
         return split
     # The comma is for Geothermal
     elif ',' in string:
-        return string.split(', ',1)
+        return string.split(', ', 1)
     # In case no unit is found
-    return [string,'']
+    return [string, '']
 
 
 
