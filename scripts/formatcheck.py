@@ -78,6 +78,9 @@ class FormatChecker:
     def check_unit_dict(self, file, replace=None):
         '''Checks commodities/products for New items or
         Unexpected units of measurement
+        Keyword Arguements:
+            file -- A pandas DataFrame
+            replace -- Dictionary with values to replace
         '''
         default = self.config['unit_dict']
         bad = 0
@@ -304,8 +307,9 @@ def add_item(key, value, dct):
         dct[key] = [value]
 
 
-# For naming config files
 def get_prefix(name):
+    '''For naming config files
+    '''
     lower = name.lower()
     prefixes = ['cy', 'fy', 'monthly', 'company', 'federal', 'native',
                 'production', 'revenue', 'disbribution']
