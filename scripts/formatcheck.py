@@ -21,6 +21,7 @@ class FormatChecker:
 
     def __init__(self, prefix):
         '''Constructor for FormatChecker. Uses config based on data
+
         Keyword Arguements:
             prefix -- Prefix of the json file
         '''
@@ -29,6 +30,7 @@ class FormatChecker:
 
     def read_config(self, prefix):
         '''Returns an decoded json file
+
         Keyword Arguements:
             prefix -- Prefix of the json file
         '''
@@ -75,15 +77,17 @@ class FormatChecker:
                     print('Whitespace found for: ' + col)
 
 
-    def check_unit_dict(self, file, replace=None):
+    def check_unit_dict(self, file):
         '''Checks commodities/products for New items or
         Unexpected units of measurement
+
         Keyword Arguements:
             file -- A pandas DataFrame
             replace -- Dictionary with values to replace
         '''
         default = self.config['unit_dict']
-        bad = 0
+        replace = self.config['replace_dict']
+        errors = 0
         col = get_com_pro(file.columns)
         replaced_dict = {i:[] for i in replace.keys()}
         is_replaced = False
@@ -95,11 +99,12 @@ class FormatChecker:
                 replaced_dict.get(cell).append(row + 1)
                 is_replaced = True
                 continue
-            bad += self._check_unit(cell, default, row)
+            errors += self._check_unit(cell, default, row)
         if is_replaced:
             print('Items to replace: ', replaced_dict)
-        if bad <= 0:
+        if errors <= 0:
             print('All units valid :)')
+        return errors
 
 
     def _check_unit(self, string, default, index):
@@ -123,7 +128,7 @@ class FormatChecker:
     def check_misc_cols(self, file):
         '''Checks non-numerical columns for Unexpected Values'''
         default = self.config['field_dict']
-        bad = False
+        is_valid = False
         if file.columns.contains('Calendar Year'):
             self.check_year(file['Calendar Year'])
         for field in default:
@@ -133,13 +138,15 @@ class FormatChecker:
                     if cell not in default.get(field) and cell != '':
                         print(field + ' Row ' + str(row)
                               + ': Unexpected Entry: ' + str(cell))
-                        bad = True
-        if not bad:
+                        is_valid = False
+        if is_valid:
             print('All fields valid :)')
+        return is_valid
 
 
     def check_year(self, col):
         '''Checks if year column is valid
+
         Keyword Arguements:
             col -- Column in which year is located
         '''
@@ -206,7 +213,7 @@ class NumberChecker:
         for i in range(len(file[self.col])):
             value = file.loc[i, self.col]
             if value < min_sig or value > max_sig:
-                print(i, value, 'A')
+                print('Row', i, ':', value)
 
 
     # Checks if 'Revenue' or 'Volume' is present
@@ -238,7 +245,7 @@ class Setup:
         units = {}
         col = get_com_pro(self.file.columns)
         if col == 'n/a':
-            return
+            return None
         for row in self.file[col]:
             # Key and Value split
             line = split_unit(row)
@@ -282,11 +289,11 @@ class Setup:
                            'unit_dict' : self.get_unit_dict(),
                            'field_dict' : self.get_misc_cols(),
                            'replace_dict' : self.get_replace_dict(),
-                           'na_check' : ['Calendar Year', 'Corperate Name', 
-                                         'Ficsal Year','Mineral Lease Type', 
+                           'na_check' : ['Calendar Year', 'Corperate Name',
+                                         'Ficsal Year','Mineral Lease Type',
                                          'Month', 'Onshore/Offshore', 'Volume']
                            }
-            json.dump(json_config, config, indent=4)    
+            json.dump(json_config, config, indent=4)
 
 
 def add_item(key, value, dct):
@@ -308,6 +315,9 @@ def add_item(key, value, dct):
 
 def get_prefix(name):
     '''For naming config files
+
+    Keyword arguements:
+        name -- Name of the Excel file
     '''
     lower = name.lower()
     prefixes = ['cy', 'fy', 'monthly', 'company', 'federal', 'native',
@@ -344,46 +354,46 @@ def get_com_pro(cols):
 
 
 # Creates FormatChecker and runs methods
-def do_check(file, prefix, to_replace):
+def do_check(file, prefix, export=False):
+    # Exports an Excel file with replaced entries
+    def export_excel(file, to_replace):
+        file.replace(to_replace, inplace=True)
+        writer = pd.ExcelWriter('PlaceholderName.xlsx', engine='xlsxwriter')
+        file.to_excel(writer, index=False, header=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Sheet1']
+        header_format = workbook.add_format({
+            'align' : 'center',
+            'bold' : False,
+            'border' : 1,
+            'bg_color' : '#C0C0C0',
+            'valign' : 'bottom'
+        })
+    #    cur_format = workbook.add_format({'num_format': '$#,##0.00'})
+    #    num_format = workbook.add_format({'num_format': '#,##0.00'})
+        for col_num, value in enumerate(file.columns.values):
+            worksheet.write(0, col_num, value, header_format)
+        writer.save()
+        print('Exported new file')
+
     check = FormatChecker(prefix)
     check.check_header(file)
     print()
-    check.check_unit_dict(file, to_replace)
-    print()
+    check.check_unit_dict(file)
     check.check_misc_cols(file)
     check.check_nan(file)
     w_count = check.get_w_count(file)
     print('\n(Volume) Ws Found: ' + str(w_count[0]))
     print('(Location) Ws Found: ' + str(w_count[1]))
 
-
-# Exports an Excel file with replaced entries
-def export_excel(file, to_replace):
-    file.replace(to_replace, inplace=True)
-    writer = pd.ExcelWriter('PlaceholderName.xlsx', engine='xlsxwriter')
-    file.to_excel(writer, index=False, header=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Sheet1']
-    header_format = workbook.add_format({
-        'align' : 'center',
-        'bold' : False,
-        'border' : 1,
-        'bg_color' : '#C0C0C0',
-        'valign' : 'bottom'
-    })
-#    cur_format = workbook.add_format({'num_format': '$#,##0.00'})
-#    num_format = workbook.add_format({'num_format': '#,##0.00'})
-    for col_num, value in enumerate(file.columns.values):
-        worksheet.write(0, col_num, value, header_format)
-    writer.save()
-    print('Exported new file')
+    if export:
+        export_excel(file, check.config['replace_dict'])
 
 
 # Where all the stuff runs
 def main():
     prefix = get_prefix(sys.argv[-1])
     file = pd.read_excel(sys.argv[-1]).fillna('')
-    to_replace = {'Mining-Unspecified' : 'Humate'} #Entries to be replaced
     if sys.argv[1] == 'setup':
         config = Setup(file)
         config.write_config(prefix)
@@ -391,9 +401,7 @@ def main():
         num = NumberChecker(file)
         num.check_sd(file, stand_dev=3)
     else:
-        do_check(file, prefix, to_replace)
-        if sys.argv[1] == 'export':
-            export_excel(file, to_replace)
+        do_check(file, prefix, sys.argv[1] == 'export')
     print('Done')
 
 
