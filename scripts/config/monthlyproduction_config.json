@@ -1,0 +1,34 @@
+{
+    "header": [
+        "Month",
+        "Calendar Year",
+        "Land Class",
+        "Land Category",
+        "Commodity",
+        "Volume"
+    ],
+    "unit_dict": {
+        "Gas Prod Vol": [
+            "mcf"
+        ],
+        "Oil Prod Vol": [
+            "bbl"
+        ],
+        "Coal Prod Vol": [
+            "ton"
+        ]
+    },
+    "field_dict": {
+        "Land Class": [
+            "Native American",
+            "Federal"
+        ],
+        "Land Category": [
+            "Offshore",
+            "Onshore"
+        ]
+    },
+    "replace_dict": {
+        "Mining-Unspecified": "Humate"
+    }
+}
