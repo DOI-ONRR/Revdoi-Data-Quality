@@ -43,7 +43,6 @@ class DataChecker:
 
     def get_w_count(self, df):
         '''Returns number of Ws found for Volume and Location
-
         Keyword Arguments:
             df -- A pandas DataFrame
         '''
@@ -192,6 +191,8 @@ class DataChecker:
             deviations = []
             for row in df.index:
                 value = df.loc[row, column]
+                if value == 'W':
+                    continue
                 if value < min_sig or value > max_sig:
                     deviations.append('Row ' +  str(row) + ': ' + str(value))
             if deviations:
@@ -253,13 +254,14 @@ class Setup:
 
     # Returns default sd for categories
     def get_sd(self, df, sd, group_by):
-        groups = df.groupby(group_by)
+        temp = df.replace({'W' : 0})
+        groups = temp.groupby(group_by)
         sd_dict = {}
-        for item, df in groups:
+        for item, item_df in groups:
             if item == '':
                 continue
-            mean = df[get_vol_rev(df)].mean()
-            std = df[get_vol_rev(df)].std() * sd
+            mean = item_df[get_vol_rev(item_df)].mean()
+            std = item_df[get_vol_rev(item_df)].std() * sd
             sd_dict[item] = (mean - std, mean + std)
         return sd_dict
 
@@ -286,6 +288,7 @@ class Setup:
                            'na_check' : ['Calendar Year', 'Corperate Name',
                                          'Ficsal Year','Mineral Lease Type',
                                          'Month', 'Onshore/Offshore', 'Volume'],
+                           'withheld_list' : ["Volume", "State"],
                            'threshold' : self.get_sd(self.df, 3,
                                                      get_com_pro(self.df))
                            }
