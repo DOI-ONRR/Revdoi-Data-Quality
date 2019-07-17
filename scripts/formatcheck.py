@@ -321,7 +321,7 @@ def get_prefix(name):
     '''
     lower = name.lower()
     prefixes = ['cy', 'fy', 'monthly', 'company', 'federal', 'native',
-                'production', 'revenue', 'disbribution']
+                'production', 'revenue', 'disbursements']
     final_prefix = ''
     for string in prefixes:
         if string in lower:
