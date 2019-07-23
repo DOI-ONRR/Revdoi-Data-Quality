@@ -29,6 +29,15 @@ python formatcheck.py ../files/monthly_revenue_05-2019
 python formatcheck.py setup ../files/monthly_production_05-2019
 ```
 
+Number Check:
+* Check File: **python numberchecker.py _file.xlsx_**
+```
+python numberchecker.py ../files/monthly_revenue_05-2019
+```
+* Setup (Only need to run once per configuration): **python numberchecker.py setup _file.xlsx_**
+```
+python numberchecker.py setup ../files/monthly_production_05-2019
+```
 
 
 
@@ -37,4 +46,4 @@ python formatcheck.py setup ../files/monthly_production_05-2019
 - [x] Field Name Check
 - [x] Non-numerical Field Check
 - [x] N/A Check
-- [ ] Numerical Field Check: wip
+- [ ] Numerical Field Check: Ready for testing
