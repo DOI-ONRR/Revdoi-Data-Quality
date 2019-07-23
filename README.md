@@ -38,7 +38,10 @@ python numberchecker.py ../files/monthly_revenue_05-2019
 ```
 python numberchecker.py setup ../files/monthly_production_05-2019
 ```
-
+* Update (If changing column groups via json): **python numberchecker.py update _file.xlsx_**
+```
+python numberchecker.py update ../files/monthly_production_05-2019
+```
 
 
 ## Progress so far
