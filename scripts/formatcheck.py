@@ -22,7 +22,7 @@ class FormatChecker:
     def __init__(self, prefix):
         '''Constructor for FormatChecker. Uses config based on data
 
-        Keyword Arguements:
+        Keyword Arguments:
             prefix -- Prefix of the json file
         '''
         self.config = self.read_config(prefix)
@@ -31,35 +31,42 @@ class FormatChecker:
     def read_config(self, prefix):
         '''Returns an decoded json file
 
-        Keyword Arguements:
+        Keyword Arguments:
             prefix -- Prefix of the json file
         '''
         with open('config/' + prefix + 'config.json', 'r') as config:
             return json.load(config)
 
 
-    def get_w_count(self, file):
-        '''Returns number of Ws found for Volume and Location'''
+    def get_w_count(self, df):
+        '''Returns number of Ws found for Volume and Location
+        Keyword Arguments:
+            df -- A pandas DataFrame
+        '''
         volume_w_count = 0
         state_w_count = 0
-        # If Volume is present in file
-        if file.columns.contains('Volume'):
-            volume_w_count = file['Volume'].eq('W').sum()
-        # If State is present in file
-        if file.columns.contains('State'):
-            state_w_count = file['State'].eq('Withheld').sum()
+        # If Volume is present in df
+        if df.columns.contains('Volume'):
+            for entry in df['Volume']:
+                if entry == 'W':
+                    volume_w_count += 1
+        # If State is present in df
+        if df.columns.contains('State'):
+            for entry in df['State']:
+                if entry == 'Withheld':
+                    state_w_count += 1
         # Returns Tuple of W count
         return volume_w_count, state_w_count
 
 
-    def check_header(self, file):
+    def check_header(self, df):
         '''Checks header for Order and missing or unexpected field names'''
         default = self.config['header']
-        columns = file.columns
+        columns = df.columns
         # Set of Unchecked columns.
         unchecked_cols = set(columns)
         for i, field in enumerate(default):
-            # Checks if Field in file and in correct column
+            # Checks if Field in df and in correct column
             if columns.contains(field):
                 if columns[i] == field:
                     print(field + ': True')
@@ -67,7 +74,7 @@ class FormatChecker:
                     print(field + ': Unexpected order')
                 unchecked_cols.remove(field)
             else:
-                # Field not present in the file
+                # Field not present in the df
                 print(field + ': Not Present')
         # Prints all fields not in the format
         if unchecked_cols:
@@ -77,24 +84,24 @@ class FormatChecker:
                     print('Whitespace found for: ' + col)
 
 
-    def check_unit_dict(self, file):
+    def check_unit_dict(self, df):
         '''Checks commodities/products for New items or
         Unexpected units of measurement
 
-        Keyword Arguements:
-            file -- A pandas DataFrame
+        Keyword Arguments:
+            df -- A pandas DataFrame
             replace -- Dictionary with values to replace
         '''
         default = self.config['unit_dict']
         replace = self.config['replace_dict']
         errors = 0
-        col = get_com_pro(file.columns)
+        col = get_com_pro(df)
         replaced_dict = {i:[] for i in replace.keys()}
         is_replaced = False
         if col == 'n/a':
             return 'No Units Available'
-        for row in range(len(file[col])):
-            cell = file.loc[row, col]
+        for row in range(len(df[col])):
+            cell = df.loc[row, col]
             if replace and replace.__contains__(cell):
                 replaced_dict.get(cell).append(row + 1)
                 is_replaced = True
@@ -125,16 +132,18 @@ class FormatChecker:
         return 0
 
 
-    def check_misc_cols(self, file):
+    def check_misc_cols(self, df):
         '''Checks non-numerical columns for Unexpected Values'''
         default = self.config['field_dict']
-        is_valid = False
-        if file.columns.contains('Calendar Year'):
-            self.check_year(file['Calendar Year'])
+        is_valid = True
+        if df.columns.contains('Calendar Year'):
+            self.check_year(df['Calendar Year'])
+        elif df.columns.contains('Fiscal Year'):
+            self.check_year(df['Fiscal Year'])
         for field in default:
-            if file.columns.contains(field):
-                for row in range(len(file[field])):
-                    cell = file.loc[row, field]
+            if df.columns.contains(field):
+                for row in range(len(df[field])):
+                    cell = df.loc[row, field]
                     if cell not in default.get(field) and cell != '':
                         print(field + ' Row ' + str(row)
                               + ': Unexpected Entry: ' + str(cell))
@@ -147,7 +156,7 @@ class FormatChecker:
     def check_year(self, col):
         '''Checks if year column is valid
 
-        Keyword Arguements:
+        Keyword Arguments:
             col -- Column in which year is located
         '''
         current_year = datetime.now().year
@@ -157,70 +166,15 @@ class FormatChecker:
                 print('Row ' + str(row + 2) + ': Invalid year ' + str(year))
 
 
-    def check_nan(self, file):
+    def check_nan(self, df):
         '''Checks if specific columns are missing values
         '''
         cols = self.config['na_check']
         for col in cols:
-            if file.columns.contains(col):
-                for row in range(len(file.index)):
-                    if file.loc[row, col] == '':
+            if df.columns.contains(col):
+                for row in range(len(df.index)):
+                    if df.loc[row, col] == '':
                         print('Row ' + str(row + 2) + ': Missing ' + col)
-
-
-class NumberChecker:
-    '''
-    Used to check if a column has numbers far from SD
-    '''
-
-    __slots__ = ['col']
-
-    def __init__(self, file):
-        self.col = self._get_vol_rev(file.columns)
-
-    # Reports values with difference > n SD
-    def check_sd(self, file, stand_dev):
-        groups = file.groupby([get_com_pro(file.columns)])
-        deviation_present = False
-        for item, df in groups:
-            if item == '':
-                continue
-            ind = df.index
-            mean = df[self.col].mean()
-            std = df[self.col].std() * stand_dev
-
-            max_sig = mean + std
-            min_sig = mean - std
-
-            deviations = []
-
-            for i in ind:
-                value = file.loc[i, self.col]
-                if value < min_sig or value > max_sig:
-                    deviations.append(str(i) + ': ' + str(value))
-            if deviations:
-                deviation_present = True
-                print('------------------------\n', item,
-                      min_sig, '|', max_sig, '\n------------------------')
-                for j in deviations:
-                    print(j)
-        if not deviation_present:
-            print('No deviations present')
-
-
-    # Set threshold
-    def check_threshold(self, file, min_sig=0, max_sig=0):
-        for i in range(len(file[self.col])):
-            value = file.loc[i, self.col]
-            if value < min_sig or value > max_sig:
-                print('Row', i, ':', value)
-
-
-    # Checks if 'Revenue' or 'Volume' is present
-    def _get_vol_rev(self, cols):
-        if cols.contains('Revenue'):
-            return 'Revenue'
-        return 'Volume'
 
 
 class Setup:
@@ -228,25 +182,29 @@ class Setup:
     For creating json files
     '''
 
-    __slots__ = ['file']
+    __slots__ = ['df']
 
-    # Constructor for Setup
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, df):
+        '''Constructor for setup
+
+        Keyword Arguments:
+            df -- A pandas DataFrame
+        '''
+        self.df = df
 
 
-    # Returns Header List based on Excel file
+    # Returns Header List based on Excel DataFrame
     def get_header(self):
-        return list(self.file.columns)
+        return list(self.df.columns)
 
 
-    # Returns Unit Dictionary on Excel file
+    # Returns Unit Dictionary on Excel DataFrame
     def get_unit_dict(self):
         units = {}
-        col = get_com_pro(self.file.columns)
+        col = get_com_pro(self.df)
         if col == 'n/a':
             return None
-        for row in self.file[col]:
+        for row in self.df[col]:
             # Key and Value split
             line = split_unit(row)
             key, value = line[0], line[1]
@@ -258,17 +216,21 @@ class Setup:
     def get_misc_cols(self):
         col_wlist = {'Revenue', 'Volume', 'Month', 'Production Volume',
                      'Total', 'Calendar Year'}
-        col_wlist.add(get_com_pro(self.file.columns))
+        col_wlist.add(get_com_pro(self.df))
         fields = {}
-        for col in self.file.columns:
+        for col in self.df.columns:
             if col not in col_wlist:
-                fields[col] = list({i for i in self.file[col]})
+                fields[col] = list({i for i in self.df[col]})
         return fields
 
 
-    def get_replace_dict(self):
-        return {'Mining-Unspecified' : 'Humate'} #Entries to be replaced
+    def get_na_check(self):
+        return ['Calendar Year', 'Corperate Name', 'Ficsal Year',
+                'Mineral Lease Type', 'Month', 'Onshore/Offshore', 'Volume']
 
+
+    def get_replace_dict(self):
+        return {'Mining-Unspecified' : 'Humate'}
 
     def make_config_path(self):
         '''Creates directory "config" if it does not exist'''
@@ -278,9 +240,9 @@ class Setup:
 
 
     def write_config(self, prefix):
-        '''Writes a json file using an Excel file
+        '''Writes a json file based on the given Excel File
 
-        Keyword arguements:
+        Keyword Arguments:
             prefix -- Prefix of the new json file
         '''
         self.make_config_path()
@@ -289,9 +251,7 @@ class Setup:
                            'unit_dict' : self.get_unit_dict(),
                            'field_dict' : self.get_misc_cols(),
                            'replace_dict' : self.get_replace_dict(),
-                           'na_check' : ['Calendar Year', 'Corperate Name',
-                                         'Ficsal Year','Mineral Lease Type',
-                                         'Month', 'Onshore/Offshore', 'Volume']
+                           'na_check' : self.get_na_check(),
                            }
             json.dump(json_config, config, indent=4)
 
@@ -299,14 +259,14 @@ class Setup:
 def add_item(key, value, dct):
     '''Adds key to dictionary if not present. Else adds value to key 'set'.
 
-    Keyword arguements:
+    Keyword Arguments:
         key -- Key entry for the dict, e.g. A commodity
         value -- Value entry corresponding to key, e.g. Unit or Value
         dictionary -- Reference to dictionary
     '''
     # Adds Value to Set if Key exists
     if key in dct:
-        if value not in dct.get(key):
+        if value not in dct[key]:
             dct[key].append(value)
     # Else adds new key with value
     else:
@@ -316,7 +276,7 @@ def add_item(key, value, dct):
 def get_prefix(name):
     '''For naming config files
 
-    Keyword arguements:
+    Keyword Arguments:
         name -- Name of the Excel file
     '''
     lower = name.lower()
@@ -345,21 +305,23 @@ def split_unit(string):
 
 
 # Checks if 'Commodity', 'Product', both, or neither are present
-def get_com_pro(cols):
-    if not cols.contains('Product') and not cols.contains('Commodity'):
+def get_com_pro(df):
+    if not df.columns.contains('Product') and not df.columns.contains('Commodity'):
         return 'n/a'
-    elif cols.contains('Commodity'):
+    elif df.columns.contains('Commodity'):
         return 'Commodity'
-    return 'Product'
+    else:
+        return 'Product'
 
 
 # Creates FormatChecker and runs methods
-def do_check(file, prefix, export=False):
-    # Exports an Excel file with replaced entries
-    def export_excel(file, to_replace):
-        file.replace(to_replace, inplace=True)
+def do_check(df, export=False):
+    check = FormatChecker(prefix)
+    # Exports an Excel df with replaced entries
+    def export_excel(df, to_replace):
+        df.replace(to_replace, inplace=True)
         writer = pd.ExcelWriter('PlaceholderName.xlsx', engine='xlsxwriter')
-        file.to_excel(writer, index=False, header=False)
+        df.to_excel(writer, index=False, header=False)
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
         header_format = workbook.add_format({
@@ -371,37 +333,32 @@ def do_check(file, prefix, export=False):
         })
     #    cur_format = workbook.add_format({'num_format': '$#,##0.00'})
     #    num_format = workbook.add_format({'num_format': '#,##0.00'})
-        for col_num, value in enumerate(file.columns.values):
+        for col_num, value in enumerate(df.columns.values):
             worksheet.write(0, col_num, value, header_format)
         writer.save()
-        print('Exported new file')
-
-    check = FormatChecker(prefix)
-    check.check_header(file)
+        print('Exported new df')
+    check.check_header(df)
     print()
-    check.check_unit_dict(file)
-    check.check_misc_cols(file)
-    check.check_nan(file)
-    w_count = check.get_w_count(file)
+    check.check_unit_dict(df)
+    check.check_misc_cols(df)
+    check.check_nan(df)
+    w_count = check.get_w_count(df)
     print('\n(Volume) Ws Found: ' + str(w_count[0]))
     print('(Location) Ws Found: ' + str(w_count[1]))
 
     if export:
-        export_excel(file, check.config['replace_dict'])
+        export_excel(df, check.config['replace_dict'])
 
 
 # Where all the stuff runs
 def main():
     prefix = get_prefix(sys.argv[-1])
-    file = pd.read_excel(sys.argv[-1]).fillna('')
+    df = pd.read_excel(sys.argv[-1]).fillna('')
     if sys.argv[1] == 'setup':
-        config = Setup(file)
+        config = Setup(df)
         config.write_config(prefix)
-    elif sys.argv[1] == 'num':
-        num = NumberChecker(file)
-        num.check_sd(file, stand_dev=3)
     else:
-        do_check(file, prefix, sys.argv[1] == 'export')
+        do_check(df, sys.argv[1] == 'export')
     print('Done')
 
 
