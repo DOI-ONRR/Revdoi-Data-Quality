@@ -1,0 +1,247 @@
+{
+    "groups": [
+        "Product"
+    ],
+    "sd_dict": {
+        "Anhydrous Sodium Sulfate (tons)": [
+            -114932.8125,
+            135829.6875
+        ],
+        "Borate Products (tons)": [
+            -85018.28547959452,
+            300638.2854795945
+        ],
+        "Borax-Anhydrous (tons)": [
+            0.0,
+            0.0
+        ],
+        "Borax-Decahydrate (tons)": [
+            -7876.6875,
+            9308.8125
+        ],
+        "Borax-Pentahydrate (tons)": [
+            -7555.625,
+            8929.375
+        ],
+        "Boric Acid (tons)": [
+            -11204.875,
+            13242.125
+        ],
+        "Brine Barrels (bbl)": [
+            0.0,
+            0.0
+        ],
+        "Brine Products (tons)": [
+            5622.294215823975,
+            111416.6498957084
+        ],
+        "Calcium Chloride (lb)": [
+            NaN,
+            NaN
+        ],
+        "Carbon Dioxide (tons)": [
+            -1859.434989197629,
+            2697.434989197629
+        ],
+        "Clay (tons)": [
+            -61053.42080507331,
+            102532.33509078759
+        ],
+        "Coal (tons)": [
+            -168931326.282413,
+            199655552.0596788
+        ],
+        "Coal Waste (Sub-Econ) (tons)": [
+            0.0,
+            0.0
+        ],
+        "Copper Concentrate (tons)": [
+            -9937.677396288573,
+            15148.528881437089
+        ],
+        "Ferro Phosphorous Slag (tons)": [
+            -174022.7977556307,
+            281356.7977556307
+        ],
+        "Gas (mcf)": [
+            -333528964.2829167,
+            366356575.05034477
+        ],
+        "Geothermal - Direct Use, Millions of Gallons": [
+            -179190439.8467446,
+            511234998.4717446
+        ],
+        "Geothermal - Direct Utilization, Hundreds of Gallons": [
+            -72584430.36312886,
+            248233629.8368789
+        ],
+        "Geothermal - Direct Utilization, Millions of BTUs": [
+            64036.0172247446,
+            369774.80402525543
+        ],
+        "Geothermal - Electrical Generation, Kilowatt Hours": [
+            -489841823.3771721,
+            929737723.424672
+        ],
+        "Geothermal - Electrical Generation, Other": [
+            -308268.06033702433,
+            929703.9503370244
+        ],
+        "Geothermal - Electrical Generation, Thousands of Pounds": [
+            -2592430712.6110253,
+            4218165784.1526923
+        ],
+        "Geothermal - sulfur": [
+            370.6139241529272,
+            5186.59274251374
+        ],
+        "Gilsonite (tons)": [
+            -17737.986834568765,
+            45136.986834568765
+        ],
+        "Gold (oz)": [
+            0.0,
+            0.0
+        ],
+        "Gold Ore (tons)": [
+            0.0,
+            0.0
+        ],
+        "Gold Placer (oz)": [
+            0.0,
+            0.0
+        ],
+        "Gold and Silver (tons)": [
+            -45.13735090765907,
+            99.63735090765907
+        ],
+        "Gold and Silver Products (oz)": [
+            -202.77963766599441,
+            379.2796376659944
+        ],
+        "Hardrock Products (tons)": [
+            -95764.97833745604,
+            310147.40690888464
+        ],
+        "Langbeinite (tons)": [
+            -627981.1830711227,
+            1580992.1830711227
+        ],
+        "Lead Concentrate (tons)": [
+            -104571.06780471899,
+            161569.9588938279
+        ],
+        "Leonardite (tons)": [
+            0.0,
+            0.0
+        ],
+        "Limestone (tons)": [
+            0.0,
+            0.0
+        ],
+        "Magnesium Chloride Brine (tons)": [
+            -40002.1875,
+            47275.3125
+        ],
+        "Manure Salts (tons)": [
+            -5128.593170119253,
+            6337.193170119253
+        ],
+        "Muriate Of Potash-Granular (tons)": [
+            -24960.717382651987,
+            703522.467382652
+        ],
+        "Muriate Of Potash-Standard (tons)": [
+            -269727.4687996037,
+            540412.5687996037
+        ],
+        "Oil (bbl)": [
+            -79256826.18181185,
+            83913308.61783557
+        ],
+        "Other Coal Products (tons)": [
+            -109248.23106333234,
+            162013.06439666566
+        ],
+        "Phosphate Raw Ore (tons)": [
+            -4407233.673365409,
+            8106593.024716761
+        ],
+        "Potash (tons)": [
+            -384310.43192873057,
+            563521.3069287306
+        ],
+        "Potassium Products (tons)": [
+            -243732.6595703615,
+            801376.9672626692
+        ],
+        "Potassium Sulphate-Standard (tons)": [
+            NaN,
+            NaN
+        ],
+        "Purge Liquor (tons - equivalent)": [
+            1270.4837742508244,
+            154613.76622574916
+        ],
+        "Quartz Crystal (tickets/pounds)": [
+            -8675.416125290523,
+            16196.25823055368
+        ],
+        "Salt (tons)": [
+            -425773.71543965966,
+            652594.294878912
+        ],
+        "Sand/Gravel (tons)": [
+            -605851.7472653564,
+            1093821.2472653564
+        ],
+        "Silver (oz)": [
+            NaN,
+            NaN
+        ],
+        "Soda Ash (tons)": [
+            -4691322.232153279,
+            8159997.952153279
+        ],
+        "Sodium Bi-Carbonate (tons)": [
+            -169004.13968360238,
+            274507.7959336024
+        ],
+        "Sodium Bisulfite (tons)": [
+            0.0,
+            0.0
+        ],
+        "Sodium Decahydrate (tons)": [
+            0.0,
+            0.0
+        ],
+        "Sodium Products (tons)": [
+            -7718.592461435066,
+            670256.5924614351
+        ],
+        "Sodium Sesquicarbonate (tons)": [
+            -83266.5625,
+            98405.9375
+        ],
+        "Sulfide (tons)": [
+            0.0,
+            0.0
+        ],
+        "Sylvite-Raw Ore (tons)": [
+            0.0,
+            0.0
+        ],
+        "Trona Ore (tons)": [
+            -138964.66832652513,
+            177373.54332652513
+        ],
+        "Wavellite (spcmn)": [
+            0.0,
+            0.0
+        ],
+        "Zinc Concentrate (tons)": [
+            -29153.525013686485,
+            44870.280569242044
+        ]
+    }
+}

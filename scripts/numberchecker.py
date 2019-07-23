@@ -1,8 +1,10 @@
 import json
 import os
 import sys
-import numpy as np
 import pandas as pd
+
+
+__author__ = 'Edward Chang'
 
 
 def get_prefix(name):
@@ -18,7 +20,7 @@ def get_prefix(name):
     for string in prefixes:
         if string in lower:
             final_prefix += string
-    return final_prefix + '_'
+    return final_prefix
 
 
 '''----- Setup Stuff -----'''
@@ -31,8 +33,13 @@ def get_num_col(df):
     return df.columns[-1]
 
 
-# Returns default sd for categories
 def get_sd(grouped_df, sd):
+    '''Calculates default standard deviation
+
+    Keyword Arguments:
+        grouped_df -- A grouped Pandas DataFrame
+        sd -- Multiplier for standard deviation
+    '''
     sd_dict = {}
     for item, item_df in grouped_df:
         item = str(item)
@@ -43,6 +50,7 @@ def get_sd(grouped_df, sd):
         std = item_df[col].std() * sd
         sd_dict[item] = (mean - std, mean + std)
     return sd_dict
+
 
 def make_config_path():
     '''Creates directory "config" if it does not exist'''
@@ -66,14 +74,9 @@ def get_col_input(df):
 Seperate the columns by commas followed by a space ", "\n').split(', ')
 
 
-# def write_col_only(df):
-#     groups = get_col_input(df)
-#     with open('num-config/col.json', 'w') as config:
-#         json.dump(groups, config, indent=4)
-#         print('Cols written to file')
-
-
 def write_config(df, prefix):
+    '''Writes a json file with columns to groupby and default sd
+    '''
     with open('num-config/sd-' + prefix + '.json', 'w') as file:
         group_by = get_col_input(df)
         sorted = df.groupby(group_by)
@@ -99,11 +102,6 @@ def update_config(df, prefix):
 
 
 '''----- Runtime Stuff -----'''
-# def read_col_only():
-#     with open('num-config/col.json', 'r') as file:
-#         return json.load(file)
-
-
 def read_config(prefix):
     with open('num-config/sd-' + prefix + '.json', 'r') as file:
         config = json.load(file)
@@ -130,27 +128,23 @@ def check_threshold(df, prefix, read_type='dict'):
             print('------------------\n' + item + '\n------------------')
             for d in deviations:
                 print(d)
-        else:
-            print('None found for', item)
 
 
 def set_groups(read_type, prefix):
     groups = []
+    # Read json file. config[0] = group_by, config[1] = sd_dict
     if read_type == 'dict':
         config = read_config(prefix)
         return df.groupby(config[0]), config[1]
     else:
-        if read_type == 'col':
-            groups = df.groupby(read_col_only())
-        else:
-            groups = df.groupby(get_col_input(df))
+        groups = df.groupby(get_col_input(df))
         return groups, get_sd(groups, 3)
 
 
 '''----- Main -----'''
 if __name__ == '__main__':
     prefix = get_prefix(sys.argv[-1])
-    df = pd.read_excel(sys.argv[-1])
+    df = pd.read_excel(sys.argv[-1]).replace({'W':0})
     if sys.argv[1] == 'setup':
         make_config_path()
         write_config(df, prefix)
