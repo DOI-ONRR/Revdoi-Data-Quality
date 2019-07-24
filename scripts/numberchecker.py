@@ -127,7 +127,7 @@ def check_threshold(df, prefix, read_type='dict'):
         deviations = []
         for row in item_df.index:
             value = df.loc[row, column]
-            if value == 'W':
+            if value == 'W' or value == 'Withheld':
                 continue
             if value < min_sig or value > max_sig:
                 deviations.append('Row ' +  str(row) + ': ' + str(value))
