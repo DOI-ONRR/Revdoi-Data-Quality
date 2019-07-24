@@ -42,11 +42,3 @@ python numberchecker.py setup ../files/monthly_production_05-2019
 ```
 python numberchecker.py update ../files/monthly_production_05-2019
 ```
-
-
-## Progress so far
-- [x] Unit Dictionary
-- [x] Field Name Check
-- [x] Non-numerical Field Check
-- [x] N/A Check
-- [ ] Numerical Field Check: Ready for testing
