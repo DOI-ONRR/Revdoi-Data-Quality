@@ -1,0 +1,169 @@
+{
+    "header": [
+        "Fiscal Year",
+        "Land Class",
+        "Revenue Type",
+        "Mineral Lease Type",
+        "Commodity",
+        "Product",
+        "Revenue"
+    ],
+    "unit_dict": {
+        "Coal": [
+            ""
+        ],
+        "Copper": [
+            ""
+        ],
+        "Gas": [
+            ""
+        ],
+        "NGL": [
+            ""
+        ],
+        "Oil": [
+            ""
+        ],
+        "Oil & Gas": [
+            "",
+            "Non Royalty"
+        ],
+        "Sand & Gravel": [
+            ""
+        ],
+        "Gypsum": [
+            ""
+        ],
+        "Cinders": [
+            ""
+        ],
+        "Sulfur": [
+            ""
+        ],
+        "Phosphate": [
+            ""
+        ],
+        "Helium": [
+            ""
+        ],
+        "Chat": [
+            ""
+        ],
+        "": [
+            ""
+        ],
+        "Mining-Unspecified": [
+            ""
+        ],
+        "Geothermal": [
+            ""
+        ],
+        "Hardrock": [
+            ""
+        ],
+        "Silica Sand": [
+            ""
+        ],
+        "Limestone": [
+            ""
+        ]
+    },
+    "field_dict": {
+        "Fiscal Year": [
+            2016,
+            2017,
+            2018,
+            2003,
+            2004,
+            2005,
+            2006,
+            2007,
+            2008,
+            2009,
+            2010,
+            2011,
+            2012,
+            2013,
+            2014,
+            2015
+        ],
+        "Land Class": [
+            "Native American"
+        ],
+        "Revenue Type": [
+            "Royalties",
+            "Other Revenues",
+            "Rents",
+            "Bonus"
+        ],
+        "Mineral Lease Type": [
+            "",
+            "Limestone",
+            "Coal",
+            "Copper",
+            "Cinders",
+            "Gypsum",
+            "Sand & Gravel",
+            "Hardrock",
+            "Oil & Gas",
+            "Phosphate",
+            "Mining-Unspecified",
+            "Chat",
+            "Silica Sand",
+            "Geothermal"
+        ],
+        "Product": [
+            "",
+            "Clay",
+            "Indian Oil- Sweet",
+            "Cinders",
+            "Gypsum",
+            "Unprocessed (Wet) Gas",
+            "Geothermal - Electrical Generation, Kilowatt Hours",
+            "Fuel Oil",
+            "Ferro Phosphorous Slag",
+            "Coal",
+            "Indian Oil- Sour",
+            "Copper",
+            "Sand & Gravel",
+            "Sulfur",
+            "Indian Oil- Asphaltic",
+            "Flash Gas",
+            "Sand/Gravel-Cubic Yards",
+            "Condensate",
+            "Borrow Sand & Gravel",
+            "Fuel Gas",
+            "Coal-Bituminous-Raw",
+            "Sand/Gravel",
+            "Gas Lost - Flared or Vented",
+            "Other Liquid Hydrocarbons",
+            "Copper Concentrate",
+            "Oil Lost",
+            "Coal Bed Methane",
+            "Indian Oil- Black Wax",
+            "Coal Waste (Sub-Econ)",
+            "Gas Hydrate",
+            "Drip or Scrubber Condensate",
+            "Oil",
+            "Helium",
+            "Molybdenum Concentrate",
+            "Carbon Dioxide Gas (CO2)",
+            "Indian Oil- Yellow Wax",
+            "Processed (Residue) Gas",
+            "Gas Plant Products",
+            "Inlet Scrubber"
+        ]
+    },
+    "replace_dict": {
+        "Mining-Unspecified": "Humate"
+    },
+    "na_check": [
+        "Calendar Year",
+        "Corperate Name",
+        "Ficsal Year",
+        "Mineral Lease Type",
+        "Month",
+        "Onshore/Offshore",
+        "Volume"
+    ]
+}

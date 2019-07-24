@@ -1,0 +1,146 @@
+{
+    "header": [
+        "Calendar Year",
+        "Land Class",
+        "Revenue Type",
+        "Mineral Lease Type",
+        "Commodity",
+        "Product",
+        "Revenue"
+    ],
+    "unit_dict": {
+        "Coal": [
+            ""
+        ],
+        "Copper": [
+            ""
+        ],
+        "Gas": [
+            ""
+        ],
+        "NGL": [
+            ""
+        ],
+        "Oil": [
+            ""
+        ],
+        "Oil & Gas": [
+            "",
+            "Non Royalty"
+        ],
+        "Sand & Gravel": [
+            ""
+        ],
+        "Gypsum": [
+            ""
+        ],
+        "Cinders": [
+            ""
+        ],
+        "Phosphate": [
+            ""
+        ],
+        "Sulfur": [
+            ""
+        ],
+        "Helium": [
+            ""
+        ],
+        "Chat": [
+            ""
+        ],
+        "Mining-Unspecified": [
+            ""
+        ],
+        "Geothermal": [
+            ""
+        ],
+        "Hardrock": [
+            ""
+        ],
+        "Silica Sand": [
+            ""
+        ],
+        "Limestone": [
+            ""
+        ]
+    },
+    "field_dict": {
+        "Land Class": [
+            "Native American"
+        ],
+        "Revenue Type": [
+            "Bonus",
+            "Royalties",
+            "Rents",
+            "Other Revenues"
+        ],
+        "Mineral Lease Type": [
+            "Geothermal",
+            "Oil & Gas",
+            "Copper",
+            "Gypsum",
+            "Silica Sand",
+            "Hardrock",
+            "Limestone",
+            "Mining-Unspecified",
+            "Chat",
+            "Cinders",
+            "Coal",
+            "Sand & Gravel",
+            "Phosphate"
+        ],
+        "Product": [
+            "",
+            "Oil Lost",
+            "Clay",
+            "Indian Oil- Asphaltic",
+            "Unprocessed (Wet) Gas",
+            "Fuel Gas",
+            "Gas Plant Products",
+            "Carbon Dioxide Gas (CO2)",
+            "Ferro Phosphorous Slag",
+            "Gas Lost - Flared or Vented",
+            "Coal",
+            "Drip or Scrubber Condensate",
+            "Coal Waste (Sub-Econ)",
+            "Coal Bed Methane",
+            "Oil",
+            "Gypsum",
+            "Copper",
+            "Other Liquid Hydrocarbons",
+            "Flash Gas",
+            "Condensate",
+            "Cinders",
+            "Inlet Scrubber",
+            "Copper Concentrate",
+            "Borrow Sand & Gravel",
+            "Indian Oil- Sweet",
+            "Molybdenum Concentrate",
+            "Processed (Residue) Gas",
+            "Sand/Gravel-Cubic Yards",
+            "Coal-Bituminous-Raw",
+            "Fuel Oil",
+            "Sulfur",
+            "Geothermal - Electrical Generation, Kilowatt Hours",
+            "Sand/Gravel",
+            "Helium",
+            "Indian Oil- Black Wax",
+            "Indian Oil- Sour",
+            "Indian Oil- Yellow Wax",
+            "Gas Hydrate"
+        ]
+    },
+    "replace_dict": {
+        "Mining-Unspecified": "Humate"
+    },
+    "na_check": [
+        "Calendar Year",
+        "Corperate Name",
+        "Ficsal Year",
+        "Mineral Lease Type",
+        "Month",
+        "Onshore/Offshore",
+        "Volume"
+    ]
+}
