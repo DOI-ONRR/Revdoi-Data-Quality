@@ -30,10 +30,14 @@ def get_num_col(df):
     Keyword Arguments:
         df -- A Pandas DataFrame
     '''
-    return df.columns[-1]
+    if df.columns.contains('Revenues'):
+        return 'Revenues'
+    else:
+        return df.columns[-1]
 
 
 def get_sd(grouped_df, sd):
+    from math import isnan
     '''Calculates default standard deviation
 
     Keyword Arguments:
@@ -48,7 +52,10 @@ def get_sd(grouped_df, sd):
             continue
         mean = item_df[col].mean()
         std = item_df[col].std() * sd
-        sd_dict[item] = (mean - std, mean + std)
+        if isnan(std):
+            sd_dict[item] = (item_df[col].min(), item_df[col].max())
+        else:
+            sd_dict[item] = (mean - std, mean + std)
     return sd_dict
 
 
@@ -65,7 +72,7 @@ def print_cols(df):
     Keyword Arguments:
         df -- A Pandas DataFrame
     '''
-    print('Available Columns:', list(df.columns), end="\n")
+    print('Available Columns:', list(df.columns)[:-1], end="\n")
 
 
 def get_col_input(df):
@@ -144,7 +151,8 @@ def set_groups(read_type, prefix):
 '''----- Main -----'''
 if __name__ == '__main__':
     prefix = get_prefix(sys.argv[-1])
-    df = pd.read_excel(sys.argv[-1]).replace({'W':0})
+    df = pd.read_excel(sys.argv[-1]).replace({'W' : 0, 'Withheld' : 0})
+    df.dropna(how='all', inplace=True)
     if sys.argv[1] == 'setup':
         make_config_path()
         write_config(df, prefix)
