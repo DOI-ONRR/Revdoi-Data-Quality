@@ -315,7 +315,7 @@ def get_com_pro(df):
 
 
 # Creates FormatChecker and runs methods
-def do_check(df, export=False):
+def do_check(df, prefix, export=False):
     check = FormatChecker(prefix)
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
@@ -358,7 +358,7 @@ def main():
         config = Setup(df)
         config.write_config(prefix)
     else:
-        do_check(df, sys.argv[1] == 'export')
+        do_check(df, prefix, sys.argv[1] == 'export')
     print('Done')
 
 
