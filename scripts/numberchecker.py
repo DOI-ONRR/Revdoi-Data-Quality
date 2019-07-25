@@ -72,13 +72,13 @@ def print_cols(df):
     Keyword Arguments:
         df -- A Pandas DataFrame
     '''
-    print('Available Columns:', list(df.columns)[:-1], end="\n")
+    print('Available Columns:', list(df.columns)[:-1], '\n')
 
 
 def get_col_input(df):
     print_cols(df)
     return input('Please type in the columns you want to group by. (Exclude quotes)\n\
-Seperate the columns by commas followed by a space ", "\n').split(', ')
+Seperate the columns by commas followed by a space ", "\nYour input here -> ').split(', ')
 
 
 def write_config(df, prefix):
@@ -115,8 +115,8 @@ def read_config(prefix):
         return config['groups'], config['sd_dict']
 
 
-def check_threshold(df, prefix, read_type='dict'):
-    groups, sd_dict = set_groups(read_type, prefix)
+def check_threshold(df, prefix):
+    groups, sd_dict = set_groups(prefix)
     column = get_num_col(df)
     for item, item_df in groups:
         item = str(item)
@@ -129,25 +129,29 @@ def check_threshold(df, prefix, read_type='dict'):
             value = df.loc[row, column]
             if value == 'W' or value == 'Withheld':
                 continue
-            if value < min_sig or value > max_sig:
-                deviations.append('Row ' +  str(row) + ': ' + str(value))
+            if value < min_sig
+                deviations.append('Low Value Row ' +  str(row) + ': ' + str(value))
+            elif value > max_sig:
+                deviations.append('High Value Row ' +  str(row) + ': ' + str(value))
         if deviations:
-            print('------------------\n' + item + '\n------------------')
+            sep_line = '-' * len(item)
+            print(sep_line + '\n' + item + '\n' + sep_line)
             for d in deviations:
                 print(d)
 
 
-def set_groups(read_type, prefix):
+def set_groups(prefix):
     groups = []
-    # Read json file. config[0] = group_by, config[1] = sd_dict
-    if read_type == 'dict':
+    try:
         config = read_config(prefix)
         return df.groupby(config[0]), config[1]
-    else:
-        groups = df.groupby(get_col_input(df))
-        return groups, get_sd(groups, 3)
+    except FileNotFoundError:
+        print('No SD-Config found. Will run setup\n')
+        write_config(df, prefix)
+    return df.groupby(config[0]), config[1]
 
 
+# TODO: Make a highlighter
 '''----- Main -----'''
 if __name__ == '__main__':
     prefix = get_prefix(sys.argv[-1])
