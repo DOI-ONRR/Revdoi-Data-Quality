@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import pandas as pd
+from pathlib import Path
 
 
 __author__ = 'Edward Chang'
@@ -13,7 +14,7 @@ def get_prefix(name):
     Keyword Arguments:
         name -- Name of the Excel file
     '''
-    lower = name.lower()
+    lower = str(name).lower()
     prefixes = ['cy', 'fy', 'monthly', 'company', 'federal', 'native',
                 'production', 'revenue', 'disbursements']
     final_prefix = ''
@@ -72,13 +73,13 @@ def print_cols(df):
     Keyword Arguments:
         df -- A Pandas DataFrame
     '''
-    print('Available Columns:', list(df.columns)[:-1], end="\n")
+    print('Available Columns:', list(df.columns)[:-1], '\n')
 
 
 def get_col_input(df):
     print_cols(df)
     return input('Please type in the columns you want to group by. (Exclude quotes)\n\
-Seperate the columns by commas followed by a space ", "\n').split(', ')
+Seperate the columns by commas followed by a space ", "\nYour input here -> ').split(', ')
 
 
 def write_config(df, prefix):
@@ -115,9 +116,10 @@ def read_config(prefix):
         return config['groups'], config['sd_dict']
 
 
-def check_threshold(df, prefix, read_type='dict'):
-    groups, sd_dict = set_groups(read_type, prefix)
+def check_threshold(df, prefix):
+    groups, sd_dict = set_groups(prefix)
     column = get_num_col(df)
+    to_highlight = []
     for item, item_df in groups:
         item = str(item)
         if item == '':
@@ -129,29 +131,56 @@ def check_threshold(df, prefix, read_type='dict'):
             value = df.loc[row, column]
             if value == 'W' or value == 'Withheld':
                 continue
-            if value < min_sig or value > max_sig:
-                deviations.append('Row ' +  str(row) + ': ' + str(value))
+            elif value < min_sig:
+                deviations.append('Low Value Row ' +  str(row) + ': ' + str(value))
+                to_highlight.append(row)
+            elif value > max_sig:
+                deviations.append('High Value Row ' +  str(row) + ': ' + str(value))
+                to_highlight.append(row)
         if deviations:
-            print('------------------\n' + item + '\n------------------')
+            sep_line = '-' * len(item)
+            print(sep_line + '\n' + item + '\n' + sep_line)
             for d in deviations:
                 print(d)
+    return to_highlight
 
 
-def set_groups(read_type, prefix):
+def set_groups(prefix):
     groups = []
-    # Read json file. config[0] = group_by, config[1] = sd_dict
-    if read_type == 'dict':
+    try:
         config = read_config(prefix)
         return df.groupby(config[0]), config[1]
-    else:
-        groups = df.groupby(get_col_input(df))
-        return groups, get_sd(groups, 3)
+    except FileNotFoundError:
+        print('No SD-Config found. Will run setup\n')
+        write_config(df, prefix)
+    return df.groupby(config[0]), config[1]
 
 
+def write_export(df, to_highlight, path):
+    col = get_num_col(df)
+    cindex = df.columns.get_loc(col) + 1
+    writer = pd.ExcelWriter('../output/NumChecked-' + path.stem + '.xlsx', engine='xlsxwriter')
+
+    df.to_excel(writer, sheet_name='Sheet1', index=True)
+    workbook  = writer.book
+    worksheet = writer.sheets['Sheet1']
+    highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
+
+    for row in to_highlight:
+        value = df.loc[row, col]
+        worksheet.write(row + 1, cindex, value, highlight_fmt)
+
+    writer.save()
+
+    print('\nDone. Exported NumberCheck to ' + str(Path.cwd()) + '\\output\\NumChecked-' + path.stem + '\n')
+
+
+# TODO: Make a highlighter
 '''----- Main -----'''
 if __name__ == '__main__':
-    prefix = get_prefix(sys.argv[-1])
-    df = pd.read_excel(sys.argv[-1]).replace({'W' : 0, 'Withheld' : 0})
+    path = Path(sys.argv[-1])
+    prefix = get_prefix(path)
+    df = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
     df.dropna(how='all', inplace=True)
     if sys.argv[1] == 'setup':
         make_config_path()
@@ -159,5 +188,7 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'update':
         update_config(df, prefix)
     else:
-        check_threshold(df, prefix)
+        to_highlight = check_threshold(df, prefix)
+        write_export(df, to_highlight, path)
+
     print('Done')
