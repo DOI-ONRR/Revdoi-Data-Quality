@@ -24,6 +24,10 @@ Format Check:
 ```
 python formatcheck.py ../files/monthly_revenue_05-2019
 ```
+* Export Changes to File: **python formatcheck.py export _file.xlsx_**
+```
+python formatcheck.py export ../files/monthly_revenue_05-2019
+```
 * Setup (Only need to run once per configuration): **python formatcheck.py setup _file.xlsx_**
 ```
 python formatcheck.py setup ../files/monthly_production_05-2019
