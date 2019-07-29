@@ -99,6 +99,9 @@ def write_config(df, prefix):
 
 
 def update_config(df, prefix):
+    ''' Reads json file for list of Columns
+    Will create new SD-Dictionary based on new groups
+    '''
     groups = read_config(prefix)[0]
     df_grouped = df.groupby(groups)
     with open('num-config/sd-' + prefix + '.json', 'w') as file:
@@ -112,12 +115,14 @@ def update_config(df, prefix):
 
 # Runtime Stuff
 def read_config(prefix):
+    '''Returns list of columns and sd-Dictionary'''
     with open('num-config/sd-' + prefix + '.json', 'r') as file:
         config = json.load(file)
         return config['groups'], config['sd_dict']
 
 
 def check_threshold(df, prefix):
+    '''Compares values of number column to sd-dict'''
     groups, sd_dict = set_groups(df, prefix)
     column = get_num_col(df)
     cells = []
