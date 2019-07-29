@@ -2,6 +2,7 @@
 For Checking anomolies within data
 '''
 from datetime import datetime
+from pathlib import Path
 import json
 import os
 import sys
@@ -315,12 +316,12 @@ def get_com_pro(df):
 
 
 # Creates FormatChecker and runs methods
-def do_check(df, prefix, name, export=False):
+def do_check(df, prefix, name, export):
     check = FormatChecker(prefix)
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
         df.replace(to_replace, inplace=True)
-        writer = pd.ExcelWriter('[new] ' + name, engine='xlsxwriter')
+        writer = pd.ExcelWriter('../output/[new] ' + name, engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
@@ -336,7 +337,7 @@ def do_check(df, prefix, name, export=False):
         for col_num, value in enumerate(df.columns.values):
             worksheet.write(0, col_num, value, header_format)
         writer.save()
-        print('Exported new df')
+        print('Exported new df to output')
     check.check_header(df)
     print()
     check.check_unit_dict(df)
@@ -359,7 +360,7 @@ def main():
         config.write_config(prefix)
     else:
         try:
-            do_check(df, prefix, sys.argv[-1], sys.argv[1] == 'export')
+            do_check(df, prefix, sys.argv[-1], sys.argv[2] == 'export')
         except FileNotFoundError:
             print("Config not found! Please use setup for: " + prefix)
     print('Done')

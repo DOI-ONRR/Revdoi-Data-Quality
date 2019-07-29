@@ -1,0 +1,448 @@
+{
+    "groups": [
+        "Commodity",
+        "Product"
+    ],
+    "sd_dict": {
+        "('CO2', 'Carbon Dioxide')": [
+            -8531.94208442464,
+            14738.94208442464
+        ],
+        "('CO2', 'Carbon Dioxide Gas (CO2)')": [
+            -28557446.08222857,
+            36638782.03796822
+        ],
+        "('Clay', 'Clay')": [
+            -10440.157268503073,
+            24373.432723048525
+        ],
+        "('Coal', 'Coal')": [
+            -224880613.9503597,
+            269110905.18006206
+        ],
+        "('Coal', 'Coal Waste (Sub-Econ)')": [
+            -32739.354873116576,
+            71569.2882064499
+        ],
+        "('Coal', 'Coal-Bituminous-Processed')": [
+            -3744.0,
+            -3744.0
+        ],
+        "('Coal', 'Coal-Bituminous-Raw')": [
+            -1610485.5411091729,
+            1390680.187109173
+        ],
+        "('Coal', 'Coal-Fines Circuit')": [
+            -1313.8704645599073,
+            -72.04953544009277
+        ],
+        "('Coal', 'Coal-Lignite-Raw')": [
+            -78117.29266860757,
+            65680.81266860756
+        ],
+        "('Coal', 'Coal-Subbituminous-Processed')": [
+            -1054808.929541757,
+            852027.464541757
+        ],
+        "('Coal', 'Coal-Subbituminous-Raw')": [
+            -5348556.494709434,
+            3729439.619709434
+        ],
+        "('Coal', 'Hydrogen - Hydrogen')": [
+            -6115268.0,
+            -6115268.0
+        ],
+        "('Coal', 'Leonardite')": [
+            -102396.97732784097,
+            228063.24823693186
+        ],
+        "('Gas', 'Coal Bed Methane')": [
+            -55778755.5442339,
+            70449645.83498909
+        ],
+        "('Gas', 'Flash Gas')": [
+            -1100368.4207677357,
+            1179049.8813376138
+        ],
+        "('Gas', 'Fuel Gas')": [
+            -1278282.5305439169,
+            1583190.5575439022
+        ],
+        "('Gas', 'Gas Hydrate')": [
+            -10183.636851426892,
+            10184.383518093558
+        ],
+        "('Gas', 'Gas Lost - Flared or Vented')": [
+            -1135670.5767228596,
+            1278591.1056942882
+        ],
+        "('Gas', 'Nitrogen')": [
+            -2310.2993024118946,
+            3090.9976074966403
+        ],
+        "('Gas', 'Processed (Residue) Gas')": [
+            -74184056.63628414,
+            88549453.97833365
+        ],
+        "('Gas', 'Unprocessed (Wet) Gas')": [
+            -45517563.59486844,
+            52024422.84761888
+        ],
+        "('Geothermal', 'Geothermal - Commercially Demineralized H2O')": [
+            -21141.48567343732,
+            13359.79567343732
+        ],
+        "('Geothermal', 'Geothermal - Direct Utilization, Hundreds of Gallons')": [
+            -541543.9443122784,
+            715735.8831358079
+        ],
+        "('Geothermal', 'Geothermal - Direct Utilization, Millions of BTUs')": [
+            -23917.59494542255,
+            119589.80968226466
+        ],
+        "('Geothermal', 'Geothermal - Direct Utilization, Other')": [
+            6.86,
+            6.86
+        ],
+        "('Geothermal', 'Geothermal - Electrical Generation, Kilowatt Hours')": [
+            -1744615.5145077994,
+            2568533.8961852184
+        ],
+        "('Geothermal', 'Geothermal - Electrical Generation, Other')": [
+            -406.49458999987996,
+            2143.773051538342
+        ],
+        "('Geothermal', 'Geothermal - Electrical Generation, Thousands of Pounds')": [
+            -2911514.0345361237,
+            8011930.61535245
+        ],
+        "('Geothermal', 'Geothermal - sulfur')": [
+            -275.76014063288653,
+            617.7372834900293
+        ],
+        "('Gilsonite', 'Gilsonite')": [
+            -1757965.2083231008,
+            4284380.400545323
+        ],
+        "('Hardrock', 'Copper')": [
+            -25573.66697538081,
+            21314.326975380805
+        ],
+        "('Hardrock', 'Copper Concentrate')": [
+            -596291.3218470159,
+            952392.9434749495
+        ],
+        "('Hardrock', 'Gold')": [
+            -2070.2387261934427,
+            4230.021226193442
+        ],
+        "('Hardrock', 'Gold Ore')": [
+            17.62,
+            17.62
+        ],
+        "('Hardrock', 'Gold Placer')": [
+            -25.857809409626817,
+            149.61780940962683
+        ],
+        "('Hardrock', 'Hardrock')": [
+            3.28,
+            3.28
+        ],
+        "('Hardrock', 'Lead Concentrate')": [
+            -4664676.047044664,
+            7110210.153926997
+        ],
+        "('Hardrock', 'Limestone')": [
+            -67620.8785277231,
+            205184.38995629453
+        ],
+        "('Hardrock', 'Quartz Crystal')": [
+            -1633.0130959340513,
+            2430.9290959340515
+        ],
+        "('Hardrock', 'Silver')": [
+            2.35,
+            2.35
+        ],
+        "('Hardrock', 'Wavellite')": [
+            -922.7540642209763,
+            1798.260730887643
+        ],
+        "('Hardrock', 'Zinc Concentrate')": [
+            -1206233.5563317682,
+            1779048.9873909256
+        ],
+        "('Helium', 'Helium')": [
+            -13223.451252639155,
+            13225.74953835344
+        ],
+        "('NGL', 'Gas Plant Products')": [
+            -18716036.739074335,
+            22434852.392540284
+        ],
+        "('Oil', 'Condensate')": [
+            -33137606.427227844,
+            37544355.75897409
+        ],
+        "('Oil', 'Drip or Scrubber Condensate')": [
+            -1077680.9912874973,
+            1310587.277740513
+        ],
+        "('Oil', 'Fuel Oil')": [
+            -183847.07052972485,
+            181909.49148210578
+        ],
+        "('Oil', 'Indian Oil- Asphaltic')": [
+            8267.22,
+            8267.22
+        ],
+        "('Oil', 'Indian Oil- Black Wax')": [
+            -626630.46,
+            -626630.46
+        ],
+        "('Oil', 'Indian Oil- Sour')": [
+            -47861.38183260489,
+            76762.7275468906
+        ],
+        "('Oil', 'Indian Oil- Sweet')": [
+            -6566938.23971363,
+            8086717.478213631
+        ],
+        "('Oil', 'Indian Oil- Yellow Wax')": [
+            494.90999999999997,
+            494.90999999999997
+        ],
+        "('Oil', 'Inlet Scrubber')": [
+            -869883.8421917817,
+            986734.5210962124
+        ],
+        "('Oil', 'Oil')": [
+            -225209551.72438666,
+            250775174.0430028
+        ],
+        "('Oil', 'Oil Lost')": [
+            -942.6450966418653,
+            1516.8079537847225
+        ],
+        "('Oil', 'Oil- Black Wax')": [
+            -725773.8589503637,
+            1125523.9789503636
+        ],
+        "('Oil', 'Oil- Sour')": [
+            5881.53,
+            5881.53
+        ],
+        "('Oil', 'Oil- Sweet')": [
+            -416658.5983469661,
+            573598.765546966
+        ],
+        "('Oil', 'Oil- Yellow Wax')": [
+            814.6,
+            814.6
+        ],
+        "('Oil', 'Other Liquid Hydrocarbons')": [
+            -63085.5736646301,
+            85044.3460589963
+        ],
+        "('Oil & Gas', 'Sulfur')": [
+            -8402.018269756809,
+            6142.178269756811
+        ],
+        "('Phosphate', 'Phosphate Concentrate')": [
+            1570.27,
+            1570.27
+        ],
+        "('Phosphate', 'Phosphate Raw Ore')": [
+            -8247168.652575588,
+            15474326.977091717
+        ],
+        "('Potassium', 'Anhydrous Sodium Sulfate')": [
+            127995.41642176299,
+            152459.37357823705
+        ],
+        "('Potassium', 'Borax-Decahydrate')": [
+            330313.46036322066,
+            615744.5796367791
+        ],
+        "('Potassium', 'Borax-Pentahydrate')": [
+            714227.5649883535,
+            1020652.9250116467
+        ],
+        "('Potassium', 'Boric Acid')": [
+            478654.61601252755,
+            536160.1739874727
+        ],
+        "('Potassium', 'Granulated Langeinite')": [
+            -11915.963020803867,
+            17561.05302080387
+        ],
+        "('Potassium', 'Langbeinite')": [
+            -7132636.191502825,
+            17125923.456765987
+        ],
+        "('Potassium', 'Langbeinite-Coarse')": [
+            30464.73,
+            30464.73
+        ],
+        "('Potassium', 'Langbeinite-Granular')": [
+            4409.368246898239,
+            17937.79175310176
+        ],
+        "('Potassium', 'Langbeinite-Special Std')": [
+            -65423.3611232417,
+            119873.9811232417
+        ],
+        "('Potassium', 'Langbeinite-Standard')": [
+            -76308.5284091436,
+            132841.2684091436
+        ],
+        "('Potassium', 'Magnesium Chloride Brine')": [
+            -4278.139980497239,
+            81116.25498049727
+        ],
+        "('Potassium', 'Manure Salts')": [
+            -5134.968942884066,
+            19022.928942884064
+        ],
+        "('Potassium', 'Muriate Of Potash-Coarse')": [
+            -1873.15,
+            -1873.15
+        ],
+        "('Potassium', 'Muriate Of Potash-Granular')": [
+            -5180573.465936915,
+            11283035.631936915
+        ],
+        "('Potassium', 'Muriate Of Potash-Standard')": [
+            -1520024.2521561685,
+            3241085.8739743484
+        ],
+        "('Potassium', 'Potash')": [
+            -3996247.720527729,
+            5932534.299527729
+        ],
+        "('Potassium', 'Potassium Sulphate Special Std')": [
+            -2699.122793496164,
+            3276.4027934961637
+        ],
+        "('Potassium', 'Potassium Sulphate-Granular')": [
+            -28546.922502600555,
+            48953.35250260055
+        ],
+        "('Potassium', 'Potassium Sulphate-Standard')": [
+            -515388.9166705309,
+            785554.331670531
+        ],
+        "('Potassium', 'Salt')": [
+            -658402.1494886953,
+            929729.973415722
+        ],
+        "('Potassium', 'Soda Ash')": [
+            3885798.9192234185,
+            3889856.5807765806
+        ],
+        "('Potassium', 'Sodium Bi-Carbonate')": [
+            124778.75959703754,
+            152492.07040296242
+        ],
+        "('Potassium', 'Sylvite-Raw Ore')": [
+            -2153.466379875007,
+            9504.076379875009
+        ],
+        "('Sand & Gravel', 'Sand/Gravel')": [
+            -388000.0364680058,
+            660063.5484680058
+        ],
+        "('Sodium', 'Anhydrous Sodium Sulfate')": [
+            -78626.45878357181,
+            349910.9606585717
+        ],
+        "('Sodium', 'Borax-Anhydrous')": [
+            -5223.095817360159,
+            18342.226928471267
+        ],
+        "('Sodium', 'Borax-Decahydrate')": [
+            -366800.9295114677,
+            715216.8113864677
+        ],
+        "('Sodium', 'Borax-Pentahydrate')": [
+            -573207.5800427434,
+            1095487.7294177434
+        ],
+        "('Sodium', 'Boric Acid')": [
+            -264168.1751070139,
+            718299.135107014
+        ],
+        "('Sodium', 'Boric Oxide')": [
+            -328.08,
+            -328.08
+        ],
+        "('Sodium', 'Brine Barrels')": [
+            -14447.723746252257,
+            19875.7681906967
+        ],
+        "('Sodium', 'Calcium Chloride')": [
+            974.36,
+            974.36
+        ],
+        "('Sodium', 'Purge Liquor')": [
+            -84875.56274765429,
+            293915.0827476543
+        ],
+        "('Sodium', 'Salt')": [
+            -346312.20031430613,
+            475341.0022031315
+        ],
+        "('Sodium', 'Salt-Waste')": [
+            92.93404215831652,
+            28291.305957841687
+        ],
+        "('Sodium', 'Soda Ash')": [
+            -26380524.560444765,
+            43473245.270861425
+        ],
+        "('Sodium', 'Soda Ash-Coarse')": [
+            -117917.72,
+            -117917.72
+        ],
+        "('Sodium', 'Soda Ash-Granular')": [
+            -776346.7625855198,
+            406642.0292521864
+        ],
+        "('Sodium', 'Sodium')": [
+            -29390.60532752465,
+            49390.565327524644
+        ],
+        "('Sodium', 'Sodium Bi-Carbonate')": [
+            -1220518.593664566,
+            1977277.394648173
+        ],
+        "('Sodium', 'Sodium Bicarbonate Animal Feed')": [
+            -28843.19,
+            -28843.19
+        ],
+        "('Sodium', 'Sodium Bisulfite')": [
+            -36882.93142397443,
+            57474.7292017522
+        ],
+        "('Sodium', 'Sodium Decahydrate')": [
+            -3233.8288115139176,
+            5350.178811513918
+        ],
+        "('Sodium', 'Sodium Sesquicarbonate')": [
+            -474957.3291390468,
+            1308339.7866390469
+        ],
+        "('Sodium', 'Sulfide')": [
+            -208326.6520529044,
+            689838.0477671901
+        ],
+        "('Sodium', 'Trona Ore')": [
+            -723184.7657715149,
+            1657327.340771515
+        ],
+        "('Sulfur', 'Sulfur')": [
+            -942313.4213511932,
+            1084440.0969394285
+        ]
+    }
+}

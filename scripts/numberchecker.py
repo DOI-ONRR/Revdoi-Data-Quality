@@ -1,8 +1,8 @@
+from pathlib import Path
 import json
 import os
 import sys
 import pandas as pd
-from pathlib import Path
 
 
 __author__ = 'Edward Chang'
@@ -24,7 +24,7 @@ def get_prefix(name):
     return final_prefix
 
 
-'''----- Setup Stuff -----'''
+# Setup Stuff
 def get_num_col(df):
     '''Returns the last column (numbers) in a given DataFrame
 
@@ -38,13 +38,14 @@ def get_num_col(df):
 
 
 def get_sd(grouped_df, sd):
-    from math import isnan
     '''Calculates default standard deviation
 
     Keyword Arguments:
         grouped_df -- A grouped Pandas DataFrame
         sd -- Multiplier for standard deviation
     '''
+    from math import isnan
+
     sd_dict = {}
     for item, item_df in grouped_df:
         item = str(item)
@@ -87,10 +88,10 @@ def write_config(df, prefix):
     '''
     with open('num-config/sd-' + prefix + '.json', 'w') as file:
         group_by = get_col_input(df)
-        sorted = df.groupby(group_by)
+        df_grouped = df.groupby(group_by)
         config = {
             'groups' : group_by,
-            'sd_dict' : get_sd(sorted, 3)
+            'sd_dict' : get_sd(df_grouped, 3)
         }
         make_config_path()
         json.dump(config, file, indent=4)
@@ -98,28 +99,33 @@ def write_config(df, prefix):
 
 
 def update_config(df, prefix):
-    groups = read_config()[0]
-    sorted = df.groupby(groups)
+    ''' Reads json file for list of Columns
+    Will create new SD-Dictionary based on new groups
+    '''
+    groups = read_config(prefix)[0]
+    df_grouped = df.groupby(groups)
     with open('num-config/sd-' + prefix + '.json', 'w') as file:
         config = {
             'groups' : groups,
-            'sd_dict' : get_sd(sorted, 3)
+            'sd_dict' : get_sd(df_grouped, 3)
         }
         json.dump(config, file, indent=4)
         print('Groups have been updated')
 
 
-'''----- Runtime Stuff -----'''
+# Runtime Stuff
 def read_config(prefix):
+    '''Returns list of columns and sd-Dictionary'''
     with open('num-config/sd-' + prefix + '.json', 'r') as file:
         config = json.load(file)
         return config['groups'], config['sd_dict']
 
 
 def check_threshold(df, prefix):
-    groups, sd_dict = set_groups(prefix)
+    '''Compares values of number column to sd-dict'''
+    groups, sd_dict = set_groups(df, prefix)
     column = get_num_col(df)
-    to_highlight = []
+    cells = []
     for item, item_df in groups:
         item = str(item)
         if item == '':
@@ -129,66 +135,66 @@ def check_threshold(df, prefix):
         deviations = []
         for row in item_df.index:
             value = df.loc[row, column]
-            if value == 'W' or value == 'Withheld':
+            if value in ('W', 'Withheld'):
                 continue
             elif value < min_sig:
                 deviations.append('Low Value Row ' +  str(row) + ': ' + str(value))
-                to_highlight.append(row)
+                cells.append(row)
             elif value > max_sig:
                 deviations.append('High Value Row ' +  str(row) + ': ' + str(value))
-                to_highlight.append(row)
+                cells.append(row)
         if deviations:
             sep_line = '-' * len(item)
             print(sep_line + '\n' + item + '\n' + sep_line)
             for d in deviations:
                 print(d)
-    return to_highlight
+    return cells
 
 
-def set_groups(prefix):
-    groups = []
+def set_groups(df, prefix):
     try:
         config = read_config(prefix)
         return df.groupby(config[0]), config[1]
     except FileNotFoundError:
         print('No SD-Config found. Will run setup\n')
         write_config(df, prefix)
+        config = read_config(prefix)
     return df.groupby(config[0]), config[1]
 
 
-def write_export(df, to_highlight, path):
+def write_export(df, cells, pathname):
     col = get_num_col(df)
     cindex = df.columns.get_loc(col) + 1
-    writer = pd.ExcelWriter('../output/NumChecked-' + path.stem + '.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('../output/NumChecked-' + pathname.stem + '.xlsx', engine='xlsxwriter')
 
     df.to_excel(writer, sheet_name='Sheet1', index=True)
-    workbook  = writer.book
+    workbook = writer.book
     worksheet = writer.sheets['Sheet1']
     highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
 
-    for row in to_highlight:
+    for row in cells:
         value = df.loc[row, col]
         worksheet.write(row + 1, cindex, value, highlight_fmt)
 
     writer.save()
 
-    print('\nDone. Exported NumberCheck to ' + str(Path.cwd()) + '\\output\\NumChecked-' + path.stem + '\n')
+    print('\nDone. Exported NumberCheck to ' + str(Path.cwd()) +
+          '\\output\\NumChecked-' + pathname.stem + '\n')
 
 
-# TODO: Make a highlighter
-'''----- Main -----'''
+# Main
 if __name__ == '__main__':
     path = Path(sys.argv[-1])
-    prefix = get_prefix(path)
-    df = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
-    df.dropna(how='all', inplace=True)
+    c_prefix = get_prefix(path)
+    to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
+    to_check.dropna(how='all', inplace=True)
     if sys.argv[1] == 'setup':
         make_config_path()
-        write_config(df, prefix)
+        write_config(to_check, c_prefix)
     elif sys.argv[1] == 'update':
-        update_config(df, prefix)
+        update_config(to_check, c_prefix)
     else:
-        to_highlight = check_threshold(df, prefix)
-        write_export(df, to_highlight, path)
+        to_highlight = check_threshold(to_check, c_prefix)
+        write_export(to_check, to_highlight, path)
 
     print('Done')
