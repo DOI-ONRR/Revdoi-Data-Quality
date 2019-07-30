@@ -95,8 +95,8 @@ class FormatChecker:
         '''
         default = self.config['unit_dict']
         replace = self.config['replace_dict']
-        errors = 0
         col = get_com_pro(df)
+        invalid = False
         replaced_dict = {i:[] for i in replace.keys()}
         is_replaced = False
         if col == 'n/a':
@@ -107,12 +107,12 @@ class FormatChecker:
                 replaced_dict.get(cell).append(row + 1)
                 is_replaced = True
                 continue
-            errors += self._check_unit(cell, default, row)
+            if self._check_unit(cell, default, row) == 1:
+                df.loc[row, col] = '[!]' + cell
         if is_replaced:
             print('Items to replace: ', replaced_dict)
-        if errors <= 0:
+        if not invalid:
             print('All units valid :)')
-        return errors
 
 
     def _check_unit(self, string, default, index):
@@ -124,7 +124,7 @@ class FormatChecker:
         # Checks if Item is valid and has correct units
         if default.__contains__(line[0]):
             if line[1] not in default.get(line[0]):
-                print('Row ' + str(index) + ': Unexpected Unit - (' + line[1]
+                print('Row ' + str(index + 2) + ': Unexpected Unit - (' + line[1]
                       + ') [For Item: ' + line[0] + ']')
                 return 1
         elif line[0] != '':
@@ -136,7 +136,7 @@ class FormatChecker:
     def check_misc_cols(self, df):
         '''Checks non-numerical columns for Unexpected Values'''
         default = self.config['field_dict']
-        is_valid = True
+        invalid = False
         if df.columns.contains('Calendar Year'):
             self.check_year(df['Calendar Year'])
         elif df.columns.contains('Fiscal Year'):
@@ -146,12 +146,12 @@ class FormatChecker:
                 for row in range(len(df[field])):
                     cell = df.loc[row, field]
                     if cell not in default.get(field) and cell != '':
-                        print(field + ' Row ' + str(row)
+                        print(field + ' Row ' + str(row + 2)
                               + ': Unexpected Entry: ' + str(cell))
-                        is_valid = False
-        if is_valid:
+                        invalid = True
+                        df.loc[row, field] = '[!]' + cell
+        if not invalid:
             print('All fields valid :)')
-        return is_valid
 
 
     def check_year(self, col):
@@ -176,6 +176,7 @@ class FormatChecker:
                 for row in range(len(df.index)):
                     if df.loc[row, col] == '':
                         print('Row ' + str(row + 2) + ': Missing ' + col)
+                        df.loc[row, col] = '[!]'
 
 
 class Setup:
@@ -280,7 +281,7 @@ def get_prefix(name):
     Keyword Arguments:
         name -- Name of the Excel file
     '''
-    lower = name.lower()
+    lower = str(name).lower()
     prefixes = ['cy', 'fy', 'monthly', 'company', 'federal', 'native',
                 'production', 'revenue', 'disbursements']
     final_prefix = ''
@@ -316,15 +317,17 @@ def get_com_pro(df):
 
 
 # Creates FormatChecker and runs methods
-def do_check(df, prefix, name):
+def do_check(df, prefix, pathname):
+
     check = FormatChecker(prefix)
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
         df.replace(to_replace, inplace=True)
-        writer = pd.ExcelWriter('../output/[new] ' + name, engine='xlsxwriter')
+        writer = pd.ExcelWriter('../output/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
+        highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
         header_format = workbook.add_format({
             'align' : 'center',
             'bold' : False,
@@ -336,6 +339,13 @@ def do_check(df, prefix, name):
     #    num_format = workbook.add_format({'num_format': '#,##0.00'})
         for col_num, value in enumerate(df.columns.values):
             worksheet.write(0, col_num, value, header_format)
+
+        end = 'ZZ' + str(len(df))
+        worksheet.conditional_format('A1:'+ end, {'type': 'text',
+                                                'criteria': 'containing',
+                                                'value':'[!]',
+                                                'format': highlight_fmt})
+
         writer.save()
         print('Exported new df to output')
     check.check_header(df)
@@ -352,16 +362,14 @@ def do_check(df, prefix, name):
 
 # Where all the stuff runs
 def main():
-    prefix = get_prefix(sys.argv[-1])
-    df = pd.read_excel(sys.argv[-1]).fillna('')
+    path = Path(sys.argv[-1])
+    prefix = get_prefix(path)
+    df = pd.read_excel(path).fillna('')
     if sys.argv[1] == 'setup':
         config = Setup(df)
         config.write_config(prefix)
     else:
-        try:
-            do_check(df, prefix, sys.argv[-1])
-        except FileNotFoundError:
-            print("Config not found! Please use setup for: " + prefix)
+        do_check(df, prefix, path)
     print('Done')
 
 
