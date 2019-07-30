@@ -318,6 +318,7 @@ def get_com_pro(df):
 
 # Creates FormatChecker and runs methods
 def do_check(df, prefix, pathname):
+
     check = FormatChecker(prefix)
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
