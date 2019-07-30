@@ -316,7 +316,7 @@ def get_com_pro(df):
 
 
 # Creates FormatChecker and runs methods
-def do_check(df, prefix, name, export):
+def do_check(df, prefix, name):
     check = FormatChecker(prefix)
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
@@ -347,8 +347,7 @@ def do_check(df, prefix, name, export):
     print('\n(Volume) Ws Found: ' + str(w_count[0]))
     print('(Location) Ws Found: ' + str(w_count[1]))
 
-    if export:
-        export_excel(df, check.config['replace_dict'])
+    export_excel(df, check.config['replace_dict'])
 
 
 # Where all the stuff runs
@@ -360,7 +359,7 @@ def main():
         config.write_config(prefix)
     else:
         try:
-            do_check(df, prefix, sys.argv[-1], sys.argv[2] == 'export')
+            do_check(df, prefix, sys.argv[-1])
         except FileNotFoundError:
             print("Config not found! Please use setup for: " + prefix)
     print('Done')
