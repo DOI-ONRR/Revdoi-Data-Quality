@@ -49,12 +49,12 @@ class FormatChecker:
         # If Volume is present in df
         if df.columns.contains('Volume'):
             for entry in df['Volume']:
-                if entry == 'W':
+                if entry in ('W', 'Withheld'):
                     volume_w_count += 1
         # If State is present in df
         if df.columns.contains('State'):
             for entry in df['State']:
-                if entry == 'Withheld':
+                if entry in ('W', 'Withheld'):
                     state_w_count += 1
         # Returns Tuple of W count
         return volume_w_count, state_w_count
