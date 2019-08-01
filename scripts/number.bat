@@ -1,1 +1,3 @@
 python numberchecker.py
+
+pause
