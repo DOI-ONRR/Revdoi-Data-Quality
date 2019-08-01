@@ -336,7 +336,7 @@ def do_check(df, prefix, pathname):
         writer = pd.ExcelWriter('../output/format/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
-        worksheet = writer.sheets['data']
+        worksheet = writer.sheets['Sheet1']
         highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
         header_format = workbook.add_format({
             'align' : 'center',
