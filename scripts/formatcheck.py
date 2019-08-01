@@ -109,6 +109,7 @@ class FormatChecker:
                 continue
             if self._check_unit(cell, default, row) == 1:
                 df.loc[row, col] = '[!]' + cell
+                invalid = True
         if is_replaced:
             print('Items to replace: ', replaced_dict)
         if not invalid:
