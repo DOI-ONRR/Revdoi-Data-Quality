@@ -323,7 +323,7 @@ def do_check(df, prefix, pathname):
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
         df.replace(to_replace, inplace=True)
-        writer = pd.ExcelWriter('../output/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter('../output/format/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
