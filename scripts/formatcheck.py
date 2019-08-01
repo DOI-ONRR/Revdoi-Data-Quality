@@ -376,7 +376,7 @@ class Application(tk.Frame):
         self.setup.pack(side="top", pady=10)
 
         self.check = tk.Button(self)
-        self.check["text"] = "Start Check"
+        self.check["text"] = "Start Form Check"
         self.check["command"] = self.start_check
         self.check.pack(side="bottom", padx=100, pady=10)
 
