@@ -317,6 +317,15 @@ def get_com_pro(df):
         return 'Product'
 
 
+def check_sheet_name(xlfile):
+    if 'data' not in xlfile.sheet_names:
+        warning = 'WARNING! Keyword "data" is missing from sheet names'
+        sep_line = '-' * len(warning)
+        print(sep_line, warning, sep_line, sep='\n')
+        return False
+    else:
+        return True
+
 # Creates FormatChecker and runs methods
 def do_check(df, prefix, pathname):
 
@@ -327,7 +336,7 @@ def do_check(df, prefix, pathname):
         writer = pd.ExcelWriter('../output/format/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
-        worksheet = writer.sheets['Sheet1']
+        worksheet = writer.sheets['data']
         highlight_fmt = workbook.add_format({'font_color': '#FF0000', 'bg_color':'#B1B3B3'})
         header_format = workbook.add_format({
             'align' : 'center',
@@ -349,6 +358,7 @@ def do_check(df, prefix, pathname):
 
         writer.save()
         print('Exported new df to output')
+
     check.check_header(df)
     print()
     check.check_unit_dict(df)
@@ -365,11 +375,13 @@ def do_check(df, prefix, pathname):
 def main():
     path = Path(sys.argv[-1])
     prefix = get_prefix(path)
-    df = pd.read_excel(path).fillna('')
+    file = pd.ExcelFile(path)
+    df = pd.read_excel(file).fillna('')
     if sys.argv[1] == 'setup':
         config = Setup(df)
         config.write_config(prefix)
     else:
+        check_sheet_name(file)
         do_check(df, prefix, path)
     print('Done')
 
