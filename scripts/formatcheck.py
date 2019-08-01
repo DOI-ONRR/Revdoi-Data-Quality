@@ -3,10 +3,12 @@ For Checking anomolies within data
 '''
 from datetime import datetime
 from pathlib import Path
+from tkinter import filedialog
 import json
 import os
 import sys
 import pandas as pd
+import tkinter as tk
 
 
 __author__ = 'Edward Chang'
@@ -49,12 +51,12 @@ class FormatChecker:
         # If Volume is present in df
         if df.columns.contains('Volume'):
             for entry in df['Volume']:
-                if entry == 'W':
+                if entry in ('W', 'Withheld'):
                     volume_w_count += 1
         # If State is present in df
         if df.columns.contains('State'):
             for entry in df['State']:
-                if entry == 'Withheld':
+                if entry in ('W', 'Withheld'):
                     state_w_count += 1
         # Returns Tuple of W count
         return volume_w_count, state_w_count
@@ -360,18 +362,43 @@ def do_check(df, prefix, pathname):
     export_excel(df, check.config['replace_dict'])
 
 
-# Where all the stuff runs
-def main():
-    path = Path(sys.argv[-1])
-    prefix = get_prefix(path)
-    df = pd.read_excel(path).fillna('')
-    if sys.argv[1] == 'setup':
-        config = Setup(df)
-        config.write_config(prefix)
-    else:
-        do_check(df, prefix, path)
-    print('Done')
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.setup = tk.Button(self)
+        self.setup["text"] = "Setup"
+        self.setup["command"] = self.do_setup
+        self.setup.pack(side="top", pady=10)
+
+        self.check = tk.Button(self)
+        self.check["text"] = "Start Check"
+        self.check["command"] = self.start_check
+        self.check.pack(side="bottom", padx=100, pady=10)
+
+    def do_setup(self):
+        file = self.get_file()
+        config = Setup(file[0])
+        config.write_config(file[1])
+        print("setup done")
+
+    def start_check(self):
+        file = self.get_file()
+        do_check(file[0], file[1], file[2])
+        print("check done")
+
+    def get_file(self):
+         path = Path(filedialog.askopenfilename(initialdir = '../input',
+                                                title = "Select file",
+                                                filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
+         return pd.read_excel(path).fillna(''), get_prefix(path), path
 
 
 if __name__ == '__main__':
-    main()
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()

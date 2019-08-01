@@ -1,6 +1,8 @@
 # Credit to Matthew Kudija for the Source Code
 # https://matthewkudija.com/blog/2018/07/21/excel-diff/
 import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
 from pathlib import Path
 from sys import argv
 
@@ -95,12 +97,58 @@ def excel_diff(path_OLD, path_NEW):
     print('\nDone. Exported DIFF to ' + str(Path.cwd()) + '\\output\\' + fname + '\n')
 
 
-def main(p1, p2):
-    path_OLD = Path(p1)
-    path_NEW = Path(p2)
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.old = "blank o"
+        self.new = "blank n"
+        self.pack()
+        self.create_widgets()
 
-    excel_diff(path_OLD, path_NEW)
+    def create_widgets(self):
+
+        self.old_file = tk.Button(self)
+        self.old_file["text"] = "Select Old File"
+        self.old_file["command"] = self.set_old
+        self.old_file.pack(side="left")
+
+        self.old_label = tk.Label(self.master, text=self.old)
+        self.old_label.pack(side="right")
+
+        self.new_file = tk.Button(self)
+        self.new_file["text"] = "Select new File"
+        self.new_file["command"] = self.set_new
+        self.new_file.pack(side="left")
+
+        self.new_label = tk.Label(self.master, text=self.new)
+        self.new_label.pack(side="right")
+
+        self.run_diff = tk.Button(self)
+        self.run_diff["text"] = "Run DIFF"
+        self.run_diff["command"] = self.start_diff
+        self.run_diff.pack(side="bottom")
+
+
+    def start_diff(self):
+        excel_diff(self.old, self.new)
+
+    def set_old(self):
+        self.old = self.get_file()
+        print("Old File Selected: ", self.old.stem)
+
+    def set_new(self):
+        self.new = self.get_file()
+        print("New File Selected: ", self.new.stem)
+
+    def get_file(self):
+         path = Path(filedialog.askopenfilename(initialdir = '../input',
+                                                title = "Select file",
+                                                filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
+         return path
 
 
 if __name__ == '__main__':
-    main(argv[1], argv[2])
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
