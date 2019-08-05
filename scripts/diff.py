@@ -44,13 +44,14 @@ def excel_diff(path_OLD, path_NEW):
             dfDiff = dfDiff.append(df_OLD.loc[row,:])
 
     dfDiff = dfDiff.sort_index().fillna('')
-    output_string = '\nNew Rows:     {}'.format(newRows) + '\nDropped Rows: {}'.format(droppedRows)
-    if len(changedCells) > 20:
-        answer = input("There are a lot of changed cells. Print anyway? [y/n]")
-        if (answer == 'y'):
-            output_string += '\nChanged Cells: {}'.format(changedCells)
+    output_string = '\nNew Rows: {}'.format(newRows) + '\nDropped Rows: {}'.format(droppedRows)
+    if len(changedCells) <= 20:
+        output_string += '\nChanged Cells: {}'.format(changedCells)
+    else:
+        print("There are a lot of changed cells. Will only display length")
+        output_string += '\nChanged Cells: {} changed cells'.format(len(changedCells))
     output_string += '\nNew Columns: {}'.format(newCols)
-    output_string += '\nDropped Columns: {}'.format(droppedCols)
+    output_string += '\nDropped Columns: {}\n'.format(droppedCols)
 
     # Save output and format
     fname = '{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
@@ -93,7 +94,7 @@ def excel_diff(path_OLD, path_NEW):
 
     # save
     writer.save()
-    return output_string + '\nDone. Exported DIFF to ' + str(Path.cwd()) + '\\output\\' + fname + '\n'
+    return output_string + '\nExported DIFF to ' + str(Path.cwd()) + '\\output\\' + fname + '\n'
 
 
 class Application(tk.Frame):
@@ -134,24 +135,35 @@ class Application(tk.Frame):
         run_diff["command"] = self.start_diff
         run_diff.grid(row=2, column=0, padx=self.padx, pady=self.pady)
 
+        run_msg = tk.Message(self, textvariable=self.output, width=200)
+        run_msg.grid(row=2, column=1)
+
     def start_diff(self):
-        print(excel_diff(Path(self.old.get()), Path(self.new.get())))
+        try:
+            results = excel_diff(Path(self.old.get()), Path(self.new.get()))
+            print(results)
+            self.output.set("Done. Check the console for the results")
+        except PermissionError:
+            error_msg = '[ERROR] Could not find file(s). Are both paths valid?'
+            self.output.set(error_msg)
 
     def set_old(self):
         self.old.set(self.get_file())
+        self.output.set("Old File Set")
 
     def set_new(self):
         self.new.set(self.get_file())
+        self.output.set("New File Set")
 
     def get_file(self):
-         path = filedialog.askopenfilename(initialdir = '../input',
-                                                title = "Select file",
-                                                filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
-         return path
+        path = filedialog.askopenfilename(initialdir = '../input',
+                                          title = "Select file",
+                                          filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
+        return path
 
 
 if __name__ == '__main__':
     root = tk.Tk()
-    root.minsize(350, 100)
+    root.minsize(500, 100)
     app = Application(master=root)
     app.mainloop()
