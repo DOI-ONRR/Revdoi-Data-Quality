@@ -1,2 +1,0 @@
-python formatcheck.py
-pause

@@ -1,0 +1,43 @@
+{
+    "header": [
+        "Month",
+        "Calendar Year",
+        "Land Class",
+        "Land Category",
+        "Commodity",
+        "Volume"
+    ],
+    "unit_dict": {
+        "Gas Prod Vol": [
+            "mcf"
+        ],
+        "Oil Prod Vol": [
+            "bbl"
+        ],
+        "Coal Prod Vol": [
+            "ton"
+        ]
+    },
+    "field_dict": {
+        "Land Class": [
+            "Federal",
+            "Native American"
+        ],
+        "Land Category": [
+            "Onshore",
+            "Offshore"
+        ]
+    },
+    "replace_dict": {
+        "Mining-Unspecified": "Humate"
+    },
+    "na_check": [
+        "Calendar Year",
+        "Corperate Name",
+        "Ficsal Year",
+        "Mineral Lease Type",
+        "Month",
+        "Onshore/Offshore",
+        "Volume"
+    ]
+}

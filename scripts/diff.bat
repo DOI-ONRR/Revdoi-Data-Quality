@@ -1,3 +1,0 @@
-python diff.py
-
-pause
