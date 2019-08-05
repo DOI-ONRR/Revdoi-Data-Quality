@@ -135,7 +135,7 @@ class Application(tk.Frame):
         run_diff["command"] = self.start_diff
         run_diff.grid(row=2, column=0, padx=self.padx, pady=self.pady)
 
-        run_msg = tk.Message(self, textvariable=self.output, width=200)
+        run_msg = tk.Message(self, textvariable=self.output, width=200, relief="solid", bg="white")
         run_msg.grid(row=2, column=1)
 
     def start_diff(self):

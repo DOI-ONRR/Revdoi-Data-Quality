@@ -3,7 +3,7 @@ For Checking anomolies within data
 '''
 from datetime import datetime
 from pathlib import Path
-from tkinter import filedialog
+from tkinter import filedialog, StringVar
 import json
 import os
 import sys
@@ -365,38 +365,54 @@ def do_check(df, prefix, pathname):
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
-        self.master = master
+        self.output = StringVar()
+        self.output.set("[run_msg will go here]")
         self.pack()
         self.create_widgets()
 
     def create_widgets(self):
-        self.setup = tk.Button(self)
-        self.setup["text"] = "Setup"
-        self.setup["command"] = self.do_setup
-        self.setup.pack(side="top", pady=10)
+        setup = tk.Button(self)
+        setup["text"] = "Setup"
+        setup["command"] = self.do_setup
+        setup.pack(side="top", pady=10)
 
-        self.check = tk.Button(self)
-        self.check["text"] = "Start Form Check"
-        self.check["command"] = self.start_check
-        self.check.pack(side="bottom", padx=100, pady=10)
+        check = tk.Button(self)
+        check["text"] = "Start Form Check"
+        check["command"] = self.start_check
+        check.pack(padx=100, pady=10)
+
+        run_msg = tk.Label(self, textvariable=self.output, relief="solid", bg="white", pady=10)
+        run_msg.pack()
 
     def do_setup(self):
-        file = self.get_file()
-        config = Setup(file[0])
-        config.write_config(file[1])
-        print("setup done")
+        try:
+            file = self.get_file()
+            config = Setup(file[0])
+            config.write_config(file[1])
+            self.output.set("Setup done")
+        except TypeError:
+            self.set_error_msg("Setup")
 
     def start_check(self):
-        file = self.get_file()
-        do_check(file[0], file[1], file[2])
-        print("check done")
+        try:
+            file = self.get_file()
+            print('\n')
+            do_check(file[0], file[1], file[2])
+            self.output.set("Check done. Check console for details")
+        except TypeError:
+            self.set_error_msg("Check")
 
     def get_file(self):
-         path = Path(filedialog.askopenfilename(initialdir = '../input',
-                                                title = "Select file",
-                                                filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
-         return pd.read_excel(path).fillna(''), get_prefix(path), path
+        try:
+            path = Path(filedialog.askopenfilename(initialdir = '../input',
+                                                   title = "Select file",
+                                                   filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
+            return pd.read_excel(path).fillna(''), get_prefix(path), path
+        except PermissionError:
+            self.set_error_msg("File Search")
 
+    def set_error_msg(self, op):
+        self.output.set("[ERROR] Could not find file. Stopping {}".format(op))
 
 if __name__ == '__main__':
     root = tk.Tk()

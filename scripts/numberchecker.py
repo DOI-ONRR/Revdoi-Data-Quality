@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import filedialog
+from tkinter import StringVar, filedialog
 import json
 import os
 import sys
@@ -180,52 +180,64 @@ def write_export(df, cells, pathname):
 
     writer.save()
 
-    print('\nDone. Exported NumberCheck to ' + str(Path.cwd()) +
+    print('\nExported NumberCheck to ' + str(Path.cwd()) +
           '\\output\\NumChecked-' + pathname.stem + '\n')
 
 
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
+        self.output = StringVar()
+        self.output.set("run_msg here")
         self.pack()
         self.create_widgets()
 
     def create_widgets(self):
-        self.setup = tk.Button(self)
-        self.setup["text"] = "Setup"
-        self.setup["command"] = self.do_setup
-        self.setup.pack(side="top", pady=10)
+        setup = tk.Button(self)
+        setup["text"] = "Setup"
+        setup["command"] = self.do_setup
+        setup.pack(side="top", pady=10)
 
-        self.read = tk.Button(self)
-        self.read["text"] = "Update JSON"
-        self.read["command"] = self.update_json
-        self.read.pack()
+        read = tk.Button(self)
+        read["text"] = "Update JSON"
+        read["command"] = self.update_json
+        read.pack()
 
-        self.check = tk.Button(self)
-        self.check["text"] = "Start Num Check"
-        self.check["command"] = self.start_check
-        self.check.pack(pady=10)
+        check = tk.Button(self)
+        check["text"] = "Start Num Check"
+        check["command"] = self.start_check
+        check.pack(pady=10)
+
+        run_msg = tk.Label(self, textvariable=self.output, relief="solid", bg="white")
+        run_msg.pack()
 
     def do_setup(self):
         file = self.get_file()
+        self.output.set('Supply input to the console')
         write_config(file[0], file[1])
+        self.output.set('Default SD written to file')
 
     def start_check(self):
         file = self.get_file()
         to_highlight = check_threshold(file[0], file[1])
         write_export(file[0], to_highlight, file[2])
+        self.output.set("Check Done. Check Console for output")
 
     def update_json(self):
         file = self.get_file()
         update_config(file[0], file[1])
+        self.output.set("update done")
 
     def get_file(self):
-        path = path = Path(filedialog.askopenfilename(initialdir = '../input',
-                                               title = "Select file",
-                                               filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
-        to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
-        to_check.dropna(how='all', inplace=True)
-        return to_check, get_prefix(path), path
+        try:
+            path = path = Path(filedialog.askopenfilename(initialdir = '../input',
+                                                   title = "Select file",
+                                                   filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
+            to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
+            to_check.dropna(how='all', inplace=True)
+            return to_check, get_prefix(path), path
+        except PermissionError:
+            self.output.set("[ERROR] Could not find file")
 
 
 if __name__ == '__main__':
