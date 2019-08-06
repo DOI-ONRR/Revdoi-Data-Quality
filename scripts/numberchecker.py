@@ -197,7 +197,7 @@ class Application(tk.Frame):
         setup = tk.Button(self)
         setup["text"] = "Setup"
         setup["command"] = self.do_setup
-        setup.pack(side="top", pady=10)
+        setup.pack(pady=10)
 
         read = tk.Button(self)
         read["text"] = "Update JSON"
@@ -213,21 +213,31 @@ class Application(tk.Frame):
         run_msg.pack()
 
     def do_setup(self):
-        file = self.get_file()
-        self.output.set('Supply input to the console')
-        write_config(file[0], file[1])
-        self.output.set('Default SD written to file')
+        try:
+            file = self.get_file()
+            self.output.set('Supply input to the console')
+            write_config(file[0], file[1])
+            self.output.set('Default SD written to file')
+        except TypeError:
+            self.set_error_msg("Setup")
 
     def start_check(self):
-        file = self.get_file()
-        to_highlight = check_threshold(file[0], file[1])
-        write_export(file[0], to_highlight, file[2])
-        self.output.set("Check Done. Check Console for output")
+        try:
+            self.output.set("Check console for input prompt")
+            file = self.get_file()
+            to_highlight = check_threshold(file[0], file[1])
+            write_export(file[0], to_highlight, file[2])
+            self.output.set("Done. Output printed to console")
+        except TypeError:
+            self.set_error_msg("Check")
 
     def update_json(self):
-        file = self.get_file()
-        update_config(file[0], file[1])
-        self.output.set("update done")
+        try:
+            file = self.get_file()
+            update_config(file[0], file[1])
+            self.output.set("update done")
+        except TypeError:
+            self.set_error_msg("JSON Update")
 
     def get_file(self):
         try:
@@ -238,10 +248,14 @@ class Application(tk.Frame):
             to_check.dropna(how='all', inplace=True)
             return to_check, get_prefix(path), path
         except PermissionError:
-            self.output.set("[ERROR] Could not find file")
+            self.set_error_msg("file search")
+
+    def set_error_msg(self, op):
+        self.output.set("[ERROR] Could not find file. Stopping {}".format(op))
 
 
 if __name__ == '__main__':
     root = tk.Tk()
+    root.minsize(300, 100)
     app = Application(master=root)
     app.mainloop()
