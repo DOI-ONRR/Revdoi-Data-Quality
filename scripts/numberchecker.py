@@ -1,8 +1,10 @@
 from pathlib import Path
+from tkinter import StringVar, filedialog
 import json
 import os
 import sys
 import pandas as pd
+import tkinter as tk
 
 
 __author__ = 'Edward Chang'
@@ -178,23 +180,68 @@ def write_export(df, cells, pathname):
 
     writer.save()
 
-    print('\nDone. Exported NumberCheck to ' + str(Path.cwd()) +
-          '\\output\\number\\NumChecked-' + pathname.stem + '\n')
+
+    print('\nExported NumberCheck to ' + str(Path.cwd()) +
+          '\\output\\NumChecked-' + pathname.stem + '\n')
 
 
-# Main
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.output = StringVar()
+        self.output.set("run_msg here")
+        self.pack()
+        self.create_widgets()
+
+    def create_widgets(self):
+        setup = tk.Button(self)
+        setup["text"] = "Setup"
+        setup["command"] = self.do_setup
+        setup.pack(side="top", pady=10)
+
+        read = tk.Button(self)
+        read["text"] = "Update JSON"
+        read["command"] = self.update_json
+        read.pack()
+
+        check = tk.Button(self)
+        check["text"] = "Start Num Check"
+        check["command"] = self.start_check
+        check.pack(pady=10)
+
+        run_msg = tk.Label(self, textvariable=self.output, relief="solid", bg="white")
+        run_msg.pack()
+
+    def do_setup(self):
+        file = self.get_file()
+        self.output.set('Supply input to the console')
+        write_config(file[0], file[1])
+        self.output.set('Default SD written to file')
+
+    def start_check(self):
+        file = self.get_file()
+        to_highlight = check_threshold(file[0], file[1])
+        write_export(file[0], to_highlight, file[2])
+        self.output.set("Check Done. Check Console for output")
+
+    def update_json(self):
+        file = self.get_file()
+        update_config(file[0], file[1])
+        self.output.set("update done")
+
+    def get_file(self):
+        try:
+            path = path = Path(filedialog.askopenfilename(initialdir = '../input',
+                                                   title = "Select file",
+                                                   filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
+            to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
+            to_check.dropna(how='all', inplace=True)
+            return to_check, get_prefix(path), path
+        except PermissionError:
+            self.output.set("[ERROR] Could not find file")
+
+
 if __name__ == '__main__':
-    path = Path(sys.argv[-1])
-    c_prefix = get_prefix(path)
-    to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
-    to_check.dropna(how='all', inplace=True)
-    if sys.argv[1] == 'setup':
-        make_config_path()
-        write_config(to_check, c_prefix)
-    elif sys.argv[1] == 'update':
-        update_config(to_check, c_prefix)
-    else:
-        to_highlight = check_threshold(to_check, c_prefix)
-        write_export(to_check, to_highlight, path)
-
-    print('Done')
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
