@@ -409,9 +409,13 @@ class Application(tk.Frame):
             file = self.get_file()
             print('\n')
             do_check(file[0], file[1], file[2])
-            self.output.set("Check done. Check console for details")
+            self.output.set("Done. Check console for details")
         except TypeError:
             self.set_error_msg("Check")
+        except FileNotFoundError:
+            msg = "[ERROR] Config not found for {}".format(file[1])
+            self.output.set(msg)
+            print(msg)
 
     def get_file(self):
         try:
