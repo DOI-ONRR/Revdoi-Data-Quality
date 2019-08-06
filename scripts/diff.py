@@ -55,7 +55,7 @@ def excel_diff(path_OLD, path_NEW):
 
     # Save output and format
     fname = '{} vs {}.xlsx'.format(path_OLD.stem,path_NEW.stem)
-    writer = pd.ExcelWriter('../output/' + fname, engine='xlsxwriter')
+    writer = pd.ExcelWriter('../output/diff/' + fname, engine='xlsxwriter')
 
     dfDiff.to_excel(writer, sheet_name='DIFF', index=True)
     df_NEW.to_excel(writer, sheet_name=path_NEW.stem, index=True)
@@ -94,6 +94,7 @@ def excel_diff(path_OLD, path_NEW):
 
     # save
     writer.save()
+
     return output_string + '\nExported DIFF to ' + str(Path.cwd()) + '\\output\\' + fname + '\n'
 
 

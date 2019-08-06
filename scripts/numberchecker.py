@@ -167,7 +167,7 @@ def set_groups(df, prefix):
 def write_export(df, cells, pathname):
     col = get_num_col(df)
     cindex = df.columns.get_loc(col) + 1
-    writer = pd.ExcelWriter('../output/NumChecked-' + pathname.stem + '.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('../output/number/NumChecked-' + pathname.stem + '.xlsx', engine='xlsxwriter')
 
     df.to_excel(writer, sheet_name='Sheet1', index=True)
     workbook = writer.book
@@ -179,6 +179,7 @@ def write_export(df, cells, pathname):
         worksheet.write(row + 1, cindex, value, highlight_fmt)
 
     writer.save()
+
 
     print('\nExported NumberCheck to ' + str(Path.cwd()) +
           '\\output\\NumChecked-' + pathname.stem + '\n')

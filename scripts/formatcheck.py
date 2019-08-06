@@ -111,6 +111,7 @@ class FormatChecker:
                 continue
             if self._check_unit(cell, default, row) == 1:
                 df.loc[row, col] = '[!]' + cell
+                invalid = True
         if is_replaced:
             print('Items to replace: ', replaced_dict)
         if not invalid:
@@ -318,6 +319,15 @@ def get_com_pro(df):
         return 'Product'
 
 
+def check_sheet_name(xlfile):
+    if 'data' not in xlfile.sheet_names:
+        warning = 'WARNING! Keyword "data" is missing from sheet names'
+        sep_line = '-' * len(warning)
+        print(sep_line, warning, sep_line, sep='\n')
+        return False
+    else:
+        return True
+
 # Creates FormatChecker and runs methods
 def do_check(df, prefix, pathname):
 
@@ -325,7 +335,7 @@ def do_check(df, prefix, pathname):
     # Exports an Excel df with replaced entries
     def export_excel(df, to_replace):
         df.replace(to_replace, inplace=True)
-        writer = pd.ExcelWriter('../output/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter('../output/format/[new] ' + pathname.stem + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, index=False, header=False)
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
@@ -350,6 +360,7 @@ def do_check(df, prefix, pathname):
 
         writer.save()
         print('Exported new df to output')
+
     check.check_header(df)
     print()
     check.check_unit_dict(df)
@@ -413,6 +424,7 @@ class Application(tk.Frame):
 
     def set_error_msg(self, op):
         self.output.set("[ERROR] Could not find file. Stopping {}".format(op))
+
 
 if __name__ == '__main__':
     root = tk.Tk()
