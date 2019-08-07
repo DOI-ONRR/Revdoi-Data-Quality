@@ -4,7 +4,6 @@ import pandas as pd
 import tkinter as tk
 from tkinter import StringVar, filedialog
 from pathlib import Path
-from sys import argv
 
 
 def excel_diff(path_OLD, path_NEW):

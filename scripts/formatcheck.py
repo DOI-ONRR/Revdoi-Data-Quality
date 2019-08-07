@@ -6,7 +6,6 @@ from pathlib import Path
 from tkinter import filedialog, StringVar
 import json
 import os
-import sys
 import pandas as pd
 import tkinter as tk
 
