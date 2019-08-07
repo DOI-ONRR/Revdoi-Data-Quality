@@ -81,7 +81,9 @@ def print_cols(df):
 def get_col_input(df):
     print_cols(df)
     return input('Please type in the columns you want to group by. (Exclude quotes)\n\
-Seperate the columns by commas followed by a space ", "\nYour input here -> ').split(', ')
+Seperate the columns by commas followed by a space ", "\n\
+(e.g.) Commdity, Revenue Type\n\
+Your input here -> ').split(', ')
 
 
 def write_config(df, prefix):
