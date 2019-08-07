@@ -1,7 +1,7 @@
 # Data-Quality-Checker
 Python scripts created for comparing and checking for anomalies in the data files. Feel free to give feedback
 
-[Slides](https://github.com/ONRR/Revdoi-Data-Quality/blob/master/Script%20Walkthrough.pdf)
+[(Limited Access) Slides](https://docs.google.com/presentation/d/1XJdBBoNqYbQjuKaMyVAfvaBBBWTCFJiZg_B4RlUHs8Q/edit?usp=sharing)
 
 [More Details](https://github.com/ONRR/Revdoi-Data-Quality/wiki)
 
