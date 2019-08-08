@@ -5,7 +5,7 @@ Very little typing required, but [**might need setup**](https://github.com/ONRR/
 ---
 ### Manually starting GUI
 
-Still need to use commaned line
+Still need to use command line
 ```
 cd [stuffhere]/revdoi-data-quality/scripts
 python scriptname.py
