@@ -186,77 +186,20 @@ def write_export(df, cells, pathname):
           '\\output\\NumChecked-' + pathname.stem + '\n')
 
 
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.output = StringVar()
-        self.output.set("run_msg here")
-        self.pack()
-        self.create_widgets()
-
-    def create_widgets(self):
-        setup = tk.Button(self)
-        setup["text"] = "Setup"
-        setup["command"] = self.do_setup
-        setup.pack(pady=10)
-
-        read = tk.Button(self)
-        read["text"] = "Update JSON"
-        read["command"] = self.update_json
-        read.pack()
-
-        check = tk.Button(self)
-        check["text"] = "Start Num Check"
-        check["command"] = self.start_check
-        check.pack(pady=10)
-
-        run_msg = tk.Label(self, textvariable=self.output, relief="solid", bg="white")
-        run_msg.pack()
-
-    def do_setup(self):
-        try:
-            file = self.get_file()
-            self.output.set('Supply input to the console')
-            write_config(file[0], file[1])
-            self.output.set('Default SD written to file')
-        except TypeError:
-            self.set_error_msg("Setup")
-
-    def start_check(self):
-        try:
-            self.output.set("Check console for input prompt")
-            file = self.get_file()
-            to_highlight = check_threshold(file[0], file[1])
-            write_export(file[0], to_highlight, file[2])
-            self.output.set("Done. Output printed to console")
-        except TypeError:
-            self.set_error_msg("Check")
-
-    def update_json(self):
-        try:
-            file = self.get_file()
-            update_config(file[0], file[1])
-            self.output.set("update done")
-        except TypeError:
-            self.set_error_msg("JSON Update")
-
-    def get_file(self):
-        try:
-            path = path = Path(filedialog.askopenfilename(initialdir = '../input',
-                                                   title = "Select file",
-                                                   filetypes = (("xlsx files","*.xlsx"),("all files","*.*"))))
-            to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
-            to_check.dropna(how='all', inplace=True)
-            return to_check, get_prefix(path), path
-        except PermissionError:
-            self.set_error_msg("file search")
-
-    def set_error_msg(self, op):
-        self.output.set("[ERROR] Could not find file. Stopping {}".format(op))
-
+# Main
+if __name__ == '__main__':
+    path = Path(sys.argv[-1])
+    c_prefix = get_prefix(path)
+    to_check = pd.read_excel(path).replace({'W' : 0, 'Withheld' : 0})
+    to_check.dropna(how='all', inplace=True)
+    if sys.argv[1] == 'setup':
+        make_config_path()
+        write_config(to_check, c_prefix)
+    elif sys.argv[1] == 'update':
+        update_config(to_check, c_prefix)
+    else:
+        to_highlight = check_threshold(to_check, c_prefix)
+        write_export(to_check, to_highlight, path)
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.minsize(300, 100)
-    app = Application(master=root)
-    app.mainloop()
+    main()

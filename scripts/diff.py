@@ -1,9 +1,8 @@
 # Credit to Matthew Kudija for the Source Code
 # https://matthewkudija.com/blog/2018/07/21/excel-diff/
 import pandas as pd
-import tkinter as tk
-from tkinter import StringVar, filedialog
 from pathlib import Path
+from sys import argv
 
 
 def excel_diff(path_OLD, path_NEW):
@@ -97,73 +96,12 @@ def excel_diff(path_OLD, path_NEW):
     return output_string + '\nExported DIFF to ' + str(Path.cwd()) + '\\output\\' + fname + '\n'
 
 
-class Application(tk.Frame):
+def main(p1, p2):
+    path_OLD = Path(p1)
+    path_NEW = Path(p2)
 
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.old = StringVar()
-        self.new = StringVar()
-        self.output = StringVar()
-        self.padx = 5
-        self.pady = 10
-        self.entry_width = 94
-        self.grid()
-        self.create_widgets()
-
-    def create_widgets(self):
-
-        old_file = tk.Button(self)
-        old_file["text"] = "Select Old File"
-        old_file["command"] = self.set_old
-        old_file.grid(row=0, column=0, padx=self.padx, pady=self.pady)
-
-        old_label = tk.Entry(self, textvariable=self.old)
-        old_label.config(width=self.entry_width)
-        old_label.grid(row=0, column=1)
-
-        new_file = tk.Button(self)
-        new_file["text"] = "Select new File"
-        new_file["command"] = self.set_new
-        new_file.grid(row=1, column=0, padx=self.padx, pady=self.pady)
-
-        new_label = tk.Entry(self, textvariable=self.new)
-        new_label.config(width=self.entry_width)
-        new_label.grid(row=1, column=1)
-
-        run_diff = tk.Button(self)
-        run_diff["text"] = "Run DIFF"
-        run_diff["command"] = self.start_diff
-        run_diff.grid(row=2, column=0, padx=self.padx, pady=self.pady)
-
-        run_msg = tk.Message(self, textvariable=self.output, width=200, relief="solid", bg="white")
-        run_msg.grid(row=2, column=1)
-
-    def start_diff(self):
-        try:
-            results = excel_diff(Path(self.old.get()), Path(self.new.get()))
-            print(results)
-            self.output.set("Done. Check the console for the results")
-        except PermissionError:
-            error_msg = '[ERROR] Could not find file(s). Are both paths valid?'
-            self.output.set(error_msg)
-
-    def set_old(self):
-        self.old.set(self.get_file())
-        self.output.set("Old File Set")
-
-    def set_new(self):
-        self.new.set(self.get_file())
-        self.output.set("New File Set")
-
-    def get_file(self):
-        path = filedialog.askopenfilename(initialdir = '../input',
-                                          title = "Select file",
-                                          filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
-        return path
+    print(excel_diff(path_OLD, path_NEW))
 
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.minsize(500, 100)
-    app = Application(master=root)
-    app.mainloop()
+    main(argv[1], argv[2])
